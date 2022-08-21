@@ -226,9 +226,11 @@ int main()
 	int nrAttributes;
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
 	std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
+	
 
 	while (!glfwWindowShouldClose(window))
 	{
+
 		// per-frame time logic
 		// --------------------
 
@@ -255,6 +257,7 @@ int main()
 			//glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(unsigned int), GL_UNSIGNED_INT, nullptr);
 			glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(float));
 		}
+
 		
 		/*********************/
 

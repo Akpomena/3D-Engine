@@ -1,7 +1,7 @@
 #include "Texture.h"
 
 #include <glad/glad.h>
-#include "../vendor/stb_image/stb_image.h"
+#include <stb_image.h>
 
 Texture::Texture(const char* texturePath, unsigned int textureSlot)
 {
