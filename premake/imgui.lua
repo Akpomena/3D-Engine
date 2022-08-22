@@ -7,8 +7,8 @@
     cppdialect "C++20"
 	staticruntime "on"
 
-	targetdir ("../../bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("../../bin-int/" .. outputdir .. "/%{prj.name}")
+	targetdir ("../bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("../bin-int/" .. outputdir .. "/%{prj.name}")
 
 	files
 	{
@@ -18,6 +18,7 @@
        "../vendor/imgui/imgui_demo.cpp",
        "../vendor/imgui/imgui_draw.cpp",
        "../vendor/imgui/imgui_internal.h",
+       "../vendor/imgui/imgui_tables.cpp",
        "../vendor/imgui/imgui_widgets.cpp",
        "../vendor/imgui/imstb_rectpack.h",
        "../vendor/imgui/imstb_textedit.h",
