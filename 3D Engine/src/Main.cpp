@@ -1,6 +1,4 @@
 #include <iostream>
-#include "glad/glad.h"
-#include "GlFW/glfw3.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -14,12 +12,15 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
-void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mod);
-void mouseCallBack(GLFWwindow* window, int button, int action, int mod);
-void cursorCallBack(GLFWwindow* window, double xPos, double yPos);
-void scrollCallBack(GLFWwindow* window, double xOffset, double yOffset);
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+#include "./Events/Event.h"
+#include "./Events/ApplicationEvent.h"
+#include "./Events/KeyEvent.h"
+#include "./Events/MouseEvent.h"
 
+#include "glad/glad.h"
+#include "./Window.h"
+
+void eventHandler(Event& e);
 void processInput(GLFWwindow* window);
 
 // settings
@@ -31,52 +32,24 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = SCREEN_WIDTH / 2.0f;
 float lastY = SCREEN_HEIGHT / 2.0f;
 bool firstMouse = true;
+bool mouseMove = true;
 
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
+Window window("3D Engine", SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main()
 {
+	window.SetEventCallback(eventHandler);
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4.0);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4.0);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-
-	if (!glfwInit())
-	{
-		std::cout << "FAILED TO INITIALIZE GLFW" << std::endl;
-		return -1;
-	}
-
-	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "3D Engine", nullptr, nullptr);
-
-
-	if (!window)
-	{
-		std::cout << "FAILED TO CREATE WINDOW" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-
-	glfwSetKeyCallback(window, keyCallBack);
-	glfwSetMouseButtonCallback(window, mouseCallBack);
-	glfwSetCursorPosCallback(window, cursorCallBack);
-	glfwSetScrollCallback(window, scrollCallBack);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-	glfwMakeContextCurrent(window);
-
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "FAILED TO INITIALIZE GLAD" << std::endl;
 		return -1;
 	}
-
 
 	/* Opengl Setup */
 	unsigned int vertexArray, VAO, indexBuffer;
@@ -91,17 +64,6 @@ int main()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 
 	float vertices[] = {
-		/*
-		-1.0f,  1.0f, 1.0f,   0.0f, 1.0f,   0
-		 1.0f,  1.0f, 1.0f,   1.0f, 1.0f,   1
-		 1.0f, -1.0f, 1.0f,	  1.0f, 0.0f,   2
-		-1.0f, -1.0f, 1.0f,	  0.0f, 0.0f,   3
-
-		-1.0f,  1.0f, -1.0f,  0.0f, 1.0f,   4
-		 1.0f,  1.0f, -1.0f,  0.0f, 1.0f,   5
-		 1.0f, -1.0f, -1.0f,  0.0f, 1.0f,   6
-		-1.0f, -1.0f, -1.0f,  0.0f, 1.0f    7
-		*/
 
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -256,12 +218,12 @@ int main()
 	}
 
 	// Setup Platform/Renderer backends
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplGlfw_InitForOpenGL(window.GetWindow(), true);
 	ImGui_ImplOpenGL3_Init("#version 400");
 
 	bool show_demo_window = true;
 
-	while (!glfwWindowShouldClose(window))
+	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
 
 		// Imgui 
@@ -303,7 +265,7 @@ int main()
 
 		/* Test inputs */
 
-		processInput(window);
+		processInput(window.GetWindow());
 
 		/***************/
 
@@ -321,11 +283,7 @@ int main()
 			glfwMakeContextCurrent(backup_current_context);
 		}
 
-		glfwSwapBuffers(window);
-
-
-		glfwPollEvents();
-
+		window.UpdateWindow();
 
 		/* Rendering goes here*/
 		glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
@@ -338,17 +296,13 @@ int main()
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	glfwDestroyWindow(window);
-
-	glfwTerminate();
+	window.ShutDown();
 
 	return 0;
 }
 
 void processInput(GLFWwindow* window)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
@@ -361,47 +315,53 @@ void processInput(GLFWwindow* window)
 
 }
 
-void scrollCallBack(GLFWwindow* window, double xOffset, double yOffset) 
+
+void eventHandler(Event& e)
 {
-	camera.ProcessMouseScroll(static_cast<float>(yOffset));
-}
+	EventDispatcher dispatcher(e);
 
-void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mod)
-{
+	dispatcher.Dispatch<KeyPressedEvent>([](KeyPressedEvent event)
+		{
+			if (event.GetKeyCode() ==  GLFW_KEY_ESCAPE)
+				glfwSetWindowShouldClose(window.GetWindow(), true);
 
-}
+			if (event.GetKeyCode() == GLFW_KEY_ENTER)
+			{
+				firstMouse = true;
+				window.enableCursor(mouseMove);
+				mouseMove = !mouseMove;
+			}
 
-void mouseCallBack(GLFWwindow* window, int button, int action, int mod)
-{
+			return true;
+		});
 
-}
+	dispatcher.Dispatch<MouseScrolledEvent>([](MouseScrolledEvent event)
+		{
+			camera.ProcessMouseScroll(static_cast<float>(event.GetYOffset() ));
+			return true;
+		});
 
-void cursorCallBack(GLFWwindow* window, double xPos, double yPos)
-{
-	float xpos = static_cast<float>(xPos);
-	float ypos = static_cast<float>(yPos);
+	dispatcher.Dispatch<MouseMovedEvent>([](MouseMovedEvent event)
+		{
+			float xpos = static_cast<float>(event.GetX());
+			float ypos = static_cast<float>(event.GetY());
 
-	if (firstMouse)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
+			if (firstMouse)
+			{
+				lastX = xpos;
+				lastY = ypos;
+				firstMouse = false;
+			}
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+			float xoffset = xpos - lastX;
+			float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-	lastX = xpos;
-	lastY = ypos;
+			lastX = xpos;
+			lastY = ypos;
 
-	camera.ProcessMouseMovement(xoffset, yoffset);
-}
+			if(mouseMove)
+				camera.ProcessMouseMovement(xoffset, yoffset);
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	// make sure the viewport matches the new window dimensions; note that width and 
-	// height will be significantly larger than specified on retina displays.
-
-	glViewport(0, 0, width, height);
-
+			return true;
+		});
 }
