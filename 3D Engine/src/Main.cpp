@@ -20,6 +20,11 @@
 #include "glad/glad.h"
 #include "./Window.h"
 
+#include "./VertexArray.h"
+#include "./VertexBuffer.h"
+#include "./VertexBufferLayout.h"
+#include "./IndexBuffer.h"
+
 void eventHandler(Event& e);
 void processInput(GLFWwindow* window);
 
@@ -52,16 +57,6 @@ int main()
 	}
 
 	/* Opengl Setup */
-	unsigned int vertexArray, VAO, indexBuffer;
-
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-
-	glGenBuffers(1, &vertexArray);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexArray);
-
-	glGenBuffers(1, &indexBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 
 	float vertices[] = {
 
@@ -109,8 +104,6 @@ int main()
 
 	};
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
 	unsigned int indices[] = {
 		// Front face
 		0, 1, 2,
@@ -138,12 +131,15 @@ int main()
 
 	};
 
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	
+	IndexBuffer indexBuffer(indices, sizeof(indices));
+	VertexBuffer vertexBuffer(vertices, sizeof(vertices));
+	VertexBufferLayout bufferLayout;
+	bufferLayout.push<float>(3);
+	bufferLayout.push<float>(2);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	VertexArray vertexArray;
+	vertexArray.AddBuffer(vertexBuffer, bufferLayout);
 
 
 	///shader
