@@ -17,9 +17,8 @@ Window::Window(const char* windowName, int width, int height): m_Height(height),
 
 void Window::UpdateWindow()
 {
-	glfwSwapBuffers(m_Window);
 	glfwPollEvents();
-
+	glfwSwapBuffers(m_Window);
 }
 
 void Window::enableCursor(bool enable)

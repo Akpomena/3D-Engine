@@ -8,9 +8,9 @@
 #include "./Camera.h"
 #include "./Texture.h"
 
-#include "imgui.h"
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
+#include <imgui.h>
+
+#include "./ImguiManager.h"
 
 #include "./Events/Event.h"
 #include "./Events/ApplicationEvent.h"
@@ -55,6 +55,10 @@ int main()
 		std::cout << "FAILED TO INITIALIZE GLAD" << std::endl;
 		return -1;
 	}
+
+	ImguiManager imguiManager;
+	imguiManager.init(window.GetWindow());
+	
 
 	/* Opengl Setup */
 
@@ -190,32 +194,7 @@ int main()
 	std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
 	
 	// IMGUI
-	// Setup Dear ImGui context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
-	//io.ConfigViewportsNoAutoMerge = true;
-	//io.ConfigViewportsNoTaskBarIcon = true;
-
-	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsLight();
-
-	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-	ImGuiStyle& style = ImGui::GetStyle();
-	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		style.WindowRounding = 0.0f;
-		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-	}
-
-	// Setup Platform/Renderer backends
-	ImGui_ImplGlfw_InitForOpenGL(window.GetWindow(), true);
-	ImGui_ImplOpenGL3_Init("#version 400");
+	
 
 	bool show_demo_window = true;
 
@@ -223,15 +202,12 @@ int main()
 	{
 
 		// Imgui 
-
-		 // Start the Dear ImGui frame
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
+		imguiManager.BeginDraw();
 		// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
+
+		imguiManager.EndDraw();
 
 		// per-frame time logic
 		// --------------------
@@ -265,20 +241,6 @@ int main()
 
 		/***************/
 
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-				// Update and Render additional Platform Windows
-		// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
-		//  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			GLFWwindow* backup_current_context = glfwGetCurrentContext();
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent(backup_current_context);
-		}
-
 		window.UpdateWindow();
 
 		/* Rendering goes here*/
@@ -286,11 +248,6 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	}
-
-	// Cleanup
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
 
 	window.ShutDown();
 
