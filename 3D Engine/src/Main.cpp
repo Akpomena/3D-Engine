@@ -61,94 +61,67 @@ int main()
 	
 
 	/* Opengl Setup */
-
 	float vertices[] = {
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 	};
-
-	unsigned int indices[] = {
-		// Front face
-		0, 1, 2,
-		2, 3, 0,
-
-		// Back face
-		4, 5, 6,
-		6, 7, 4,
-
-		// Right Face
-		1, 5, 6,
-		6, 2, 1,
-
-		// Left Face
-		0, 4, 7,
-		7, 3, 0,
-
-		// Top Face
-		0, 1, 5,
-		5, 4, 0,
-
-		// Bottom Face
-		3, 7, 6,
-		6, 2, 3
-
-	};
-
 	
-	IndexBuffer indexBuffer(indices, sizeof(indices));
-	VertexBuffer vertexBuffer(vertices, sizeof(vertices));
-	VertexBufferLayout bufferLayout;
-	bufferLayout.push<float>(3);
-	bufferLayout.push<float>(2);
+	VertexBuffer boxVertexBuffer(vertices, sizeof(vertices));
+	VertexBufferLayout boxBufferLayout;
+	boxBufferLayout.push<float>(3);
+	boxBufferLayout.push<float>(3);
 
-	VertexArray vertexArray;
-	vertexArray.AddBuffer(vertexBuffer, bufferLayout);
+	VertexArray boxVertexArray;
+	boxVertexArray.AddBuffer(boxVertexBuffer, boxBufferLayout);
 
+	// Light Source
+
+	glm::vec3 lightPosition = { 1.2f, 1.0f, 2.0f };
+	glm::vec3 lightColor = glm::vec3(1.0f);
 
 	///shader
 
-	Shader shader("assets/shaders/BasicVertexShader.vert", "assets/shaders/BasicFragShader.frag");
+	Shader boxShader("assets/shaders/BasicVertexShader.vert", "assets/shaders/BasicFragShader.frag");
+	Shader lightShader("assets/shaders/LightVertexShader.vert", "assets/shaders/LightFragShader.frag");
 
 
 	/***************************/
@@ -157,34 +130,6 @@ int main()
 	glm::mat4 view;
 
 	/***************************/
-
-	// Textures
-
-	/***************************/
-
-	Texture box("assets/textures/container.jpg", 0);
-
-	Texture awesomeface("assets/textures/awesomeface.png", 1);
-
-	shader.Bind();
-
-	shader.SetUniform1i("u_Texture0", 0);
-	shader.SetUniform1i("u_Texture1", 1);
-	
-	/***************************/
-
-	glm::vec3 positions[] = {
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(2.0f, 5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f, 3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f, 2.0f, -2.5f),
-		glm::vec3(1.5f, 0.2f, -1.5f),
-		glm::vec3(-1.3f, 1.0f, -1.5f)
-	};
 
 	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -200,12 +145,32 @@ int main()
 
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
+		boxShader.Bind();
+
+		glm::vec3 diffuseColor = lightColor * 0.5f;
+		glm::vec3 ambientColor = diffuseColor * 0.2f;
+
+		boxShader.SetUniformVec3("u_Light.ambient", ambientColor);
+		boxShader.SetUniformVec3("u_Light.diffuse", diffuseColor);
+		boxShader.SetUniformVec3("u_Light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		boxShader.SetUniformVec3("u_Light.position", lightPosition);
+
+		boxShader.SetUniformVec3("u_Material.ambientColor", glm::vec3(1.0f, 0.5f, 0.31f));
+		boxShader.SetUniformVec3("u_Material.diffuseColor", glm::vec3(1.0f, 0.5f, 0.31f));
+		boxShader.SetUniformVec3("u_Material.specularColor", glm::vec3(0.5f, 0.5f, 0.5f));
+		boxShader.SetUniformFloat("u_Material.shininess", 32.0f);
+
+		boxShader.SetUniformVec3("viewPosition", camera.Position);
 
 		// Imgui 
 		imguiManager.BeginDraw();
 		// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-		if (show_demo_window)
-			ImGui::ShowDemoWindow(&show_demo_window);
+		ImGui::Begin("Light Properties");
+
+		ImGui::ColorEdit3("Light Color", &lightColor[0]);
+		ImGui::SliderFloat3("Light Position", (float*) & lightPosition, -20.0f, 20.0f, "%.3f", 1.0f);
+
+		ImGui::End();
 
 		imguiManager.EndDraw();
 
@@ -217,21 +182,28 @@ int main()
 		lastFrame = currentFrame;
 
 		perspective = glm::perspective(glm::radians(camera.Zoom), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
-		shader.SetUniformMat4("u_Perspective", perspective);
+		boxShader.SetUniformMat4("u_Perspective", perspective);
 		
 		view = camera.GetViewMatrix();
-		shader.SetUniformMat4("u_View", view);
+		boxShader.SetUniformMat4("u_View", view);
 
-		for (int i = 0; i < 10; i++)
-		{
-			glm::mat4 model = glm::translate(glm::mat4(1.0f), positions[i]);
-			//model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.7f, 0.5f, 1.0f));
-			shader.SetUniformMat4("u_Model", model);			
-	
-			//glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(unsigned int), GL_UNSIGNED_INT, nullptr);
-			glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(float));
-		}
 
+		glm::mat4 model = glm::mat4(1.0f);
+		boxShader.SetUniformMat4("u_Model", model);
+
+		glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(float));
+
+		model = glm::translate(model, lightPosition);
+		model = glm::scale(model, glm::vec3(0.2f));
+
+		lightShader.Bind();
+
+		lightShader.SetUniformMat4("u_Model", model);
+		lightShader.SetUniformMat4("u_Perspective", perspective);
+		lightShader.SetUniformMat4("u_View", view);
+		lightShader.SetUniformVec3("u_Color", lightColor);
+
+		glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(float));
 		
 		/*********************/
 

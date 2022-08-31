@@ -7,7 +7,7 @@
 #include "glad/glad.h"
 
 Shader::Shader(const char* vertexShader, const char* fragmentShader) :
-	u_ShaderID(0)
+	m_ShaderID(0)
 {
 	std::ifstream vertexFile(vertexShader);
 	std::ifstream fragmentFile(fragmentShader);
@@ -41,17 +41,27 @@ Shader::Shader(const char* vertexShader, const char* fragmentShader) :
 
 void Shader::Bind()
 {
-	glUseProgram(u_ShaderID);
+	glUseProgram(m_ShaderID);
 }
 
-void Shader::SetUniform1i(const char* name, int value)
+void Shader::SetUniformInt(const char* name, int value)
 {
-	glUniform1i(glGetUniformLocation(u_ShaderID, name), value);
+	glUniform1i(glGetUniformLocation(m_ShaderID, name), value);
+}
+
+void Shader::SetUniformFloat(const char* name, float value)
+{
+	glUniform1f(glGetUniformLocation(m_ShaderID, name), value);
 }
 
 void Shader::SetUniformMat4(const char* name, glm::mat4 value)
 {
-	glUniformMatrix4fv(glGetUniformLocation(u_ShaderID, name), 1, false, glm::value_ptr(value));
+	glUniformMatrix4fv(glGetUniformLocation(m_ShaderID, name), 1, false, glm::value_ptr(value));
+}
+
+void Shader::SetUniformVec3(const char* name, glm::vec3 value)
+{
+	glUniform3fv(glGetUniformLocation(m_ShaderID, name), 1, glm::value_ptr(value));
 }
 
 unsigned int  Shader::CompileShader(const char* source, int shaderType)
@@ -77,23 +87,23 @@ unsigned int  Shader::CompileShader(const char* source, int shaderType)
 
 void Shader::CreateShader(const char* vertexSource, const char* fragmentSource)
 {
-	u_ShaderID = glCreateProgram();
+	m_ShaderID = glCreateProgram();
 	
 	unsigned int vertexShader = CompileShader(vertexSource, GL_VERTEX_SHADER);
 	unsigned int fragmentShader = CompileShader(fragmentSource, GL_FRAGMENT_SHADER);
 
-	glAttachShader(u_ShaderID, vertexShader);
-	glAttachShader(u_ShaderID, fragmentShader);
-	glLinkProgram(u_ShaderID);
+	glAttachShader(m_ShaderID, vertexShader);
+	glAttachShader(m_ShaderID, fragmentShader);
+	glLinkProgram(m_ShaderID);
 
 	int success;
 	char infoLog[520];
 
-	glGetProgramiv(u_ShaderID, GL_LINK_STATUS, &success);
+	glGetProgramiv(m_ShaderID, GL_LINK_STATUS, &success);
 
 	if (!success)
 	{
-		glGetProgramInfoLog(u_ShaderID, 520, nullptr, infoLog);
+		glGetProgramInfoLog(m_ShaderID, 520, nullptr, infoLog);
 
 		std::cout << "PROGRAM LINKING FAILED\n" << infoLog << std::endl;
 	}

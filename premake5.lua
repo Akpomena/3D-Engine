@@ -37,6 +37,7 @@ project "3D Engine"
 	files
 	{
 		"%{prj.name}/src/**.h",
+		"%{prj.name}/assets/shaders/**",
 		"%{prj.name}/src/**.cpp",
 		"vendor/stb_Image/**.cpp"
 	}
