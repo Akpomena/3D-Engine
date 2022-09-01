@@ -143,22 +143,24 @@ int main()
 
 	bool show_demo_window = true;
 
+	glm::vec3 diffuseColor = glm::vec3(1.0f, 0.5f, 0.31f);
+	glm::vec3 ambientColor = glm::vec3(1.0f, 0.5f, 0.31f);
+	glm::vec3 specularColor = glm::vec3(0.5f, 0.5f, 0.5f);
+	float shininess = 1.0f;
+
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
 		boxShader.Bind();
 
-		glm::vec3 diffuseColor = lightColor * 0.5f;
-		glm::vec3 ambientColor = diffuseColor * 0.2f;
-
-		boxShader.SetUniformVec3("u_Light.ambient", ambientColor);
-		boxShader.SetUniformVec3("u_Light.diffuse", diffuseColor);
+		boxShader.SetUniformVec3("u_Light.ambient", lightColor);
+		boxShader.SetUniformVec3("u_Light.diffuse", lightColor);
 		boxShader.SetUniformVec3("u_Light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 		boxShader.SetUniformVec3("u_Light.position", lightPosition);
 
-		boxShader.SetUniformVec3("u_Material.ambientColor", glm::vec3(1.0f, 0.5f, 0.31f));
-		boxShader.SetUniformVec3("u_Material.diffuseColor", glm::vec3(1.0f, 0.5f, 0.31f));
-		boxShader.SetUniformVec3("u_Material.specularColor", glm::vec3(0.5f, 0.5f, 0.5f));
-		boxShader.SetUniformFloat("u_Material.shininess", 32.0f);
+		boxShader.SetUniformVec3("u_Material.ambientColor",ambientColor);
+		boxShader.SetUniformVec3("u_Material.diffuseColor", diffuseColor);
+		boxShader.SetUniformVec3("u_Material.specularColor", specularColor);
+		boxShader.SetUniformFloat("u_Material.shininess", 128.0f * shininess);
 
 		boxShader.SetUniformVec3("viewPosition", camera.Position);
 
@@ -168,7 +170,16 @@ int main()
 		ImGui::Begin("Light Properties");
 
 		ImGui::ColorEdit3("Light Color", &lightColor[0]);
-		ImGui::SliderFloat3("Light Position", (float*) & lightPosition, -20.0f, 20.0f, "%.3f", 1.0f);
+		ImGui::SliderFloat3("Light Position", (float*) & lightPosition, -2.0f, 2.0f, "%.3f", 1.0f);
+
+		ImGui::Begin("Box Properties");
+
+		ImGui::InputFloat3("Ambient", (float*)&ambientColor, "%.3f");
+		ImGui::InputFloat3("Diffuse", (float*)&diffuseColor, "%.3f");
+		ImGui::InputFloat3("Specular", (float*)&specularColor, "%.3f");
+		ImGui::InputFloat("Shininess", &shininess, 0.01, 1, "% .3f");
+
+		ImGui::End();
 
 		ImGui::End();
 
