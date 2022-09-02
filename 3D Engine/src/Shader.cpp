@@ -46,22 +46,37 @@ void Shader::Bind()
 
 void Shader::SetUniformInt(const char* name, int value)
 {
-	glUniform1i(glGetUniformLocation(m_ShaderID, name), value);
-}
+	glUniform1i(GetUniformLocation(name), value);
+} 
 
 void Shader::SetUniformFloat(const char* name, float value)
 {
-	glUniform1f(glGetUniformLocation(m_ShaderID, name), value);
+	glUniform1f(GetUniformLocation(name), value);
 }
 
 void Shader::SetUniformMat4(const char* name, glm::mat4 value)
 {
-	glUniformMatrix4fv(glGetUniformLocation(m_ShaderID, name), 1, false, glm::value_ptr(value));
+	glUniformMatrix4fv(GetUniformLocation(name), 1, false, glm::value_ptr(value));
 }
 
 void Shader::SetUniformVec3(const char* name, glm::vec3 value)
 {
-	glUniform3fv(glGetUniformLocation(m_ShaderID, name), 1, glm::value_ptr(value));
+	glUniform3fv(GetUniformLocation(name), 1, glm::value_ptr(value));
+}
+
+int Shader::GetUniformLocation(const char* name)
+{
+	if (m_UniformLocations.find(name) != m_UniformLocations.end())
+		return m_UniformLocations[name];
+
+	int location = glGetUniformLocation(m_ShaderID, name);
+
+	if (location == -1)
+		std::cout << "Invalid Location for: " << name << std::endl;
+
+	m_UniformLocations[name] = location;
+
+	return location;
 }
 
 unsigned int  Shader::CompileShader(const char* source, int shaderType)

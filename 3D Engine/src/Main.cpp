@@ -62,53 +62,55 @@ int main()
 
 	/* Opengl Setup */
 	float vertices[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		// positions          // normals           // texture coords
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
 
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 	};
 	
 	VertexBuffer boxVertexBuffer(vertices, sizeof(vertices));
 	VertexBufferLayout boxBufferLayout;
 	boxBufferLayout.push<float>(3);
 	boxBufferLayout.push<float>(3);
+	boxBufferLayout.push<float>(2);
 
 	VertexArray boxVertexArray;
 	boxVertexArray.AddBuffer(boxVertexBuffer, boxBufferLayout);
@@ -118,11 +120,15 @@ int main()
 	glm::vec3 lightPosition = { 1.2f, 1.0f, 2.0f };
 	glm::vec3 lightColor = glm::vec3(1.0f);
 
-	///shader
+	// Shader
 
 	Shader boxShader("assets/shaders/BasicVertexShader.vert", "assets/shaders/BasicFragShader.frag");
 	Shader lightShader("assets/shaders/LightVertexShader.vert", "assets/shaders/LightFragShader.frag");
 
+	// Texture
+
+	Texture container("assets/textures/container2.png", 0);
+	Texture containerSpecular("assets/textures/container2_specular.png", 1);
 
 	/***************************/
 
@@ -143,30 +149,33 @@ int main()
 
 	bool show_demo_window = true;
 
-	glm::vec3 diffuseColor = glm::vec3(1.0f, 0.5f, 0.31f);
-	glm::vec3 ambientColor = glm::vec3(1.0f, 0.5f, 0.31f);
-	glm::vec3 specularColor = glm::vec3(0.5f, 0.5f, 0.5f);
 	float shininess = 1.0f;
+
+
+	boxShader.Bind();
+
+	boxShader.SetUniformInt("u_Material.diffuse", 0);
+
+	boxShader.SetUniformInt("u_Material.specular", 1);
 
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
+		glm::vec3 diffuseColor = lightColor * 0.5f;
+		glm::vec3 ambientColor = lightColor * 0.2f;
+
 		boxShader.Bind();
 
-		boxShader.SetUniformVec3("u_Light.ambient", lightColor);
-		boxShader.SetUniformVec3("u_Light.diffuse", lightColor);
-		boxShader.SetUniformVec3("u_Light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		boxShader.SetUniformVec3("u_Light.ambient", ambientColor);
+		boxShader.SetUniformVec3("u_Light.diffuse", diffuseColor);
+		boxShader.SetUniformVec3("u_Light.specular", lightColor);
 		boxShader.SetUniformVec3("u_Light.position", lightPosition);
 
-		boxShader.SetUniformVec3("u_Material.ambientColor",ambientColor);
-		boxShader.SetUniformVec3("u_Material.diffuseColor", diffuseColor);
-		boxShader.SetUniformVec3("u_Material.specularColor", specularColor);
 		boxShader.SetUniformFloat("u_Material.shininess", 128.0f * shininess);
 
 		boxShader.SetUniformVec3("viewPosition", camera.Position);
 
 		// Imgui 
 		imguiManager.BeginDraw();
-		// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 		ImGui::Begin("Light Properties");
 
 		ImGui::ColorEdit3("Light Color", &lightColor[0]);
@@ -174,9 +183,6 @@ int main()
 
 		ImGui::Begin("Box Properties");
 
-		ImGui::InputFloat3("Ambient", (float*)&ambientColor, "%.3f");
-		ImGui::InputFloat3("Diffuse", (float*)&diffuseColor, "%.3f");
-		ImGui::InputFloat3("Specular", (float*)&specularColor, "%.3f");
 		ImGui::InputFloat("Shininess", &shininess, 0.01, 1, "% .3f");
 
 		ImGui::End();
