@@ -129,6 +129,7 @@ int main()
 
 	Texture container("assets/textures/container2.png", 0);
 	Texture containerSpecular("assets/textures/container2_specular.png", 1);
+	Texture emission("assets/textures/matrix.jpg", 2);
 
 	/***************************/
 
@@ -158,6 +159,8 @@ int main()
 
 	boxShader.SetUniformInt("u_Material.specular", 1);
 
+	boxShader.SetUniformInt("u_Material.emission", 2);
+
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
 		glm::vec3 diffuseColor = lightColor * 0.5f;
@@ -173,6 +176,8 @@ int main()
 		boxShader.SetUniformFloat("u_Material.shininess", 128.0f * shininess);
 
 		boxShader.SetUniformVec3("viewPosition", camera.Position);
+
+		boxShader.SetUniformFloat("u_Time", glfwGetTime());
 
 		// Imgui 
 		imguiManager.BeginDraw();

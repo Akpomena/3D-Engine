@@ -9,6 +9,7 @@ struct Material
 {
 	sampler2D diffuse;
 	sampler2D specular;
+	sampler2D emission;
 
 	float shininess;
 };
@@ -25,6 +26,7 @@ struct Light
 uniform Material u_Material;
 uniform Light u_Light;
 
+uniform float u_Time;
 
 uniform vec3 viewPosition;
 
@@ -49,7 +51,14 @@ void main()
 	vec3 specular =  spec * u_Light.specular * vec3(texture(u_Material.specular, texCoord));
 	
 // Final Result
-	vec3 result = ambient + diffuse + specular;
+
+	vec3 emission;
+	if(texture(u_Material.specular, texCoord).r == 0.0f)
+		emission = texture(u_Material.emission, texCoord + vec2(0.0, u_Time)).rgb;
+	else
+		emission = vec3(0.0f);
+
+	vec3 result = ambient + diffuse + specular + emission;
 
 	color = vec4(result, 1.0f);
 }
