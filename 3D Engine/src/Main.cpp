@@ -45,6 +45,11 @@ float lastFrame = 0.0f;
 
 Window window("3D Engine", SCREEN_WIDTH, SCREEN_HEIGHT);
 
+struct PointLightVariables
+{
+	float constant = 1.0f, linear = 0.09f, quadratic = 0.032f;
+};
+
 int main()
 {
 	window.SetEventCallback(eventHandler);
@@ -117,7 +122,7 @@ int main()
 
 	// Light Source
 
-	glm::vec3 lightPosition = { 1.2f, 1.0f, 2.0f };
+	glm::vec4 lightPosition = { 1.2f, 1.0f, 2.0f, 1.0f };
 	glm::vec3 lightColor = glm::vec3(1.0f);
 
 	// Shader
@@ -147,19 +152,50 @@ int main()
 	
 	// IMGUI
 	
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
 
-	bool show_demo_window = true;
+	glm::vec3 pointLightPositions[] = {
+		glm::vec3(0.7f,  0.2f,  2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f,  2.0f, -12.0f),
+		glm::vec3(0.0f,  0.0f, -3.0f)
+	};
+
+	glm::vec3 pointLightColors[] = {
+		glm::vec3(1.0f),
+		glm::vec3(1.0f),
+		glm::vec3(1.0f),
+		glm::vec3(1.0f)
+	};
+
+	PointLightVariables pointLightVars[4];
+
+	boxShader.Bind();
+	boxShader.SetUniformInt("u_Material.diffuse", 0);
+	boxShader.SetUniformInt("u_Material.specular", 1);
+	boxShader.SetUniformInt("u_Material.emission", 2);
+
+	float spotLightConstant = 1.0f, spotLightLinear = 0.09f, spotLightQuadratic = 0.032f;
+	float cutoff = 12.5f, outterCutoff = 17.5f;
 
 	float shininess = 1.0f;
 
+	glm::vec3 dirLightColor = glm::vec3(1.0f);
+	glm::vec3 dirLightDirection = { -0.2f, -1.0f, -0.3f };
 
-	boxShader.Bind();
-
-	boxShader.SetUniformInt("u_Material.diffuse", 0);
-
-	boxShader.SetUniformInt("u_Material.specular", 1);
-
-	boxShader.SetUniformInt("u_Material.emission", 2);
+	glm::vec3 spotLightColor = glm::vec3(1.0f);
+	glm::vec4 clearColor = { 0.2f, 0.2f, 0.2f, 0.0f };
 
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
@@ -168,11 +204,45 @@ int main()
 
 		boxShader.Bind();
 
-		boxShader.SetUniformVec3("u_Light.ambient", ambientColor);
-		boxShader.SetUniformVec3("u_Light.diffuse", diffuseColor);
-		boxShader.SetUniformVec3("u_Light.specular", lightColor);
-		boxShader.SetUniformVec3("u_Light.position", lightPosition);
+		// Setting Directional Light Uniforms 
+		boxShader.SetUniformVec3("u_dirLight.ambient", dirLightColor * 0.2f);
+		boxShader.SetUniformVec3("u_dirLight.diffuse", dirLightColor * 0.5f);
+		boxShader.SetUniformVec3("u_dirLight.specular", dirLightColor);
+		boxShader.SetUniformVec3("u_dirLight.direction", dirLightDirection);
 
+		// Setting Spot Light Uniforms 
+
+		boxShader.SetUniformVec3("u_SpotLight.ambient", spotLightColor * 0.2f);
+		boxShader.SetUniformVec3("u_SpotLight.diffuse", spotLightColor * 0.2f);
+		boxShader.SetUniformVec3("u_SpotLight.specular", spotLightColor);
+
+		boxShader.SetUniformVec3("u_SpotLight.position", camera.Position);
+		boxShader.SetUniformVec3("u_SpotLight.direction", camera.Front);
+		boxShader.SetUniformFloat("u_SpotLight.cutoff", glm::cos(glm::radians(cutoff)));
+		boxShader.SetUniformFloat("u_SpotLight.outterCutOff", glm::cos(glm::radians(outterCutoff)));
+
+		boxShader.SetUniformFloat("u_SpotLight.constant", spotLightConstant);
+		boxShader.SetUniformFloat("u_SpotLight.linear", spotLightLinear);
+		boxShader.SetUniformFloat("u_SpotLight.quadratic", spotLightQuadratic);
+
+		// Setting Point Lights Uniforms
+
+		for (int i = 0; i < 4; i++)
+		{
+			std::string number = std::to_string(i);
+
+			boxShader.SetUniformVec3(("u_PointLights[" + number + "].ambient"), pointLightColors[i] * 0.2f);
+			boxShader.SetUniformVec3(("u_PointLights[" + number + "].diffuse"), pointLightColors[i] * 0.5f);
+			boxShader.SetUniformVec3(("u_PointLights[" + number + "].specular"), pointLightColors[i]);
+
+			boxShader.SetUniformVec3(("u_PointLights[" + number + "].position"), pointLightPositions[i]);
+
+			boxShader.SetUniformFloat(("u_PointLights[" + number + "].constant"), pointLightVars[i].constant);
+			boxShader.SetUniformFloat(("u_PointLights[" + number + "].linear"), pointLightVars[i].linear);
+			boxShader.SetUniformFloat(("u_PointLights[" + number + "].quadratic"), pointLightVars[i].quadratic);
+		}
+
+		//
 		boxShader.SetUniformFloat("u_Material.shininess", 128.0f * shininess);
 
 		boxShader.SetUniformVec3("viewPosition", camera.Position);
@@ -181,19 +251,44 @@ int main()
 
 		// Imgui 
 		imguiManager.BeginDraw();
-		ImGui::Begin("Light Properties");
+		
+		ImGui::ColorEdit4("Clear Color", &clearColor[0]);
 
-		ImGui::ColorEdit3("Light Color", &lightColor[0]);
-		ImGui::SliderFloat3("Light Position", (float*) & lightPosition, -2.0f, 2.0f, "%.3f", 1.0f);
+		if (ImGui::CollapsingHeader("Directional Light"))
+		{
+			ImGui::ColorEdit3("Light Color", &dirLightColor[0]);
+			ImGui::SliderFloat3("Light Direction", (float*)&dirLightDirection, -10.0f, 10.0f, "%.3f", 1.0f);
+			//ImGui::InputFloat3("Light Direction", (float*)&lightDirection, "%.3f", 1.0f);
+		}
 
-		ImGui::Begin("Box Properties");
+		if (ImGui::CollapsingHeader("Spot Light"))
+		{
+			ImGui::ColorEdit3("Light Color", &spotLightColor[0]);
+			ImGui::SliderFloat("Cutoff", &cutoff, 0, 90, "% .3f");
+			ImGui::SliderFloat("OutterCutoff", &outterCutoff, 0, 90, "% .3f");
+			ImGui::InputFloat("Constant", &spotLightConstant, 0.01, 1, "% .1f");
+			ImGui::InputFloat("Linear", &spotLightLinear, 0.001, 1, "% .3f");
+			ImGui::InputFloat("Quadratic", &spotLightQuadratic, 0.001, 1, "% .4f");
+		}
 
-		ImGui::InputFloat("Shininess", &shininess, 0.01, 1, "% .3f");
+		for (int i = 0; i < 4; i++)
+		{
+			std::string name = ("Point Light" + std::to_string(i));
+			if (ImGui::CollapsingHeader(name.c_str()))
+			{
+				ImGui::ColorEdit3("Light Color", &pointLightColors[i][0]);
+				ImGui::SliderFloat3("Light Position", (float*)&pointLightPositions[i], -10.0f, 10.0f, "%.3f", 1.0f);
 
-		ImGui::End();
+				ImGui::InputFloat("Constant", &pointLightVars[i].constant, 0.01, 1, "% .1f");
+				ImGui::InputFloat("Linear", &pointLightVars[i].linear, 0.001, 1, "% .3f");
+				ImGui::InputFloat("Quadratic", &pointLightVars[i].quadratic, 0.001, 1, "% .4f");
+			}
+		}
+	
 
-		ImGui::End();
+		//ImGui::InputFloat("Shininess", &shininess, 0.01, 1, "% .3f");
 
+		//ImGui::End();
 		imguiManager.EndDraw();
 
 		// per-frame time logic
@@ -209,23 +304,32 @@ int main()
 		view = camera.GetViewMatrix();
 		boxShader.SetUniformMat4("u_View", view);
 
+		for (int i = 0; i < 10; i++)
+		{
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			boxShader.SetUniformMat4("u_Model", model);
 
-		glm::mat4 model = glm::mat4(1.0f);
-		boxShader.SetUniformMat4("u_Model", model);
+			glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(float));
+		}		
 
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(float));
+		for (int i = 0; i < 4; i++)
+		{
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, pointLightPositions[i]);
+			model = glm::scale(model, glm::vec3(0.2f));
 
-		model = glm::translate(model, lightPosition);
-		model = glm::scale(model, glm::vec3(0.2f));
+			lightShader.Bind();
 
-		lightShader.Bind();
+			lightShader.SetUniformMat4("u_Model", model);
+			lightShader.SetUniformMat4("u_Perspective", perspective);
+			lightShader.SetUniformMat4("u_View", view);
+			lightShader.SetUniformVec3("u_Color", pointLightColors[i]);
 
-		lightShader.SetUniformMat4("u_Model", model);
-		lightShader.SetUniformMat4("u_Perspective", perspective);
-		lightShader.SetUniformMat4("u_View", view);
-		lightShader.SetUniformVec3("u_Color", lightColor);
-
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(float));
+			glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(float));
+		}
 		
 		/*********************/
 
@@ -238,7 +342,7 @@ int main()
 		window.UpdateWindow();
 
 		/* Rendering goes here*/
-		glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
+		glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	}

@@ -44,32 +44,37 @@ void Shader::Bind()
 	glUseProgram(m_ShaderID);
 }
 
-void Shader::SetUniformInt(const char* name, int value)
+void Shader::SetUniformInt(std::string name, int value)
 {
 	glUniform1i(GetUniformLocation(name), value);
 } 
 
-void Shader::SetUniformFloat(const char* name, float value)
+void Shader::SetUniformFloat(std::string name, float value)
 {
 	glUniform1f(GetUniformLocation(name), value);
 }
 
-void Shader::SetUniformMat4(const char* name, glm::mat4 value)
+void Shader::SetUniformMat4(std::string name, glm::mat4 value)
 {
 	glUniformMatrix4fv(GetUniformLocation(name), 1, false, glm::value_ptr(value));
 }
 
-void Shader::SetUniformVec3(const char* name, glm::vec3 value)
+void Shader::SetUniformVec3(std::string name, glm::vec3 value)
 {
 	glUniform3fv(GetUniformLocation(name), 1, glm::value_ptr(value));
 }
 
-int Shader::GetUniformLocation(const char* name)
+void Shader::SetUniformVec4(std::string name, glm::vec4 value)
+{
+	glUniform4fv(GetUniformLocation(name), 1, glm::value_ptr(value));
+}
+
+int Shader::GetUniformLocation(std::string name)
 {
 	if (m_UniformLocations.find(name) != m_UniformLocations.end())
 		return m_UniformLocations[name];
 
-	int location = glGetUniformLocation(m_ShaderID, name);
+	int location = glGetUniformLocation(m_ShaderID, name.c_str());
 
 	if (location == -1)
 		std::cout << "Invalid Location for: " << name << std::endl;

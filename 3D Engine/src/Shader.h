@@ -11,15 +11,16 @@ public:
 	Shader(const char* vertexShader, const char* fragmentShader);
 	void Bind();
 	
-	void SetUniformInt(const char* name, int value);
-	void SetUniformFloat(const char* name, float value);
-	void SetUniformMat4(const char* name, glm::mat4 value);
-	void SetUniformVec3(const char* name, glm::vec3 value);
+	void SetUniformInt(std::string name, int value);
+	void SetUniformFloat(std::string name, float value);
+	void SetUniformMat4(std::string name, glm::mat4 value);
+	void SetUniformVec3(std::string name, glm::vec3 value);
+	void SetUniformVec4(std::string name, glm::vec4 value);
 private:
 	unsigned int m_ShaderID;
-	std::unordered_map<const char*, int> m_UniformLocations;
+	std::unordered_map<std::string, int> m_UniformLocations;
 private:
-	int GetUniformLocation(const char* name);
+	int GetUniformLocation(std::string name);
 	unsigned int  CompileShader(const char* source, int shaderType);
 	void CreateShader(const char* vertexSource, const char* fragmentSource);
 };
