@@ -2,30 +2,47 @@
 
 #include <glad/glad.h>
 #include <stb_image.h>
+#include <iostream>
 
-Texture::Texture(const char* texturePath, unsigned int textureSlot)
+Texture::Texture(std::string texturePath, unsigned int textureSlot, std::string type):
+	m_Path(texturePath), m_Slot(textureSlot), m_Type(type)
 {
 	stbi_set_flip_vertically_on_load(true);
 
 	glGenTextures(1, &m_TextureID);
-	glActiveTexture(GL_TEXTURE0 + textureSlot);
+	//glActiveTexture(GL_TEXTURE0 + textureSlot);
 	glBindTexture(GL_TEXTURE_2D, m_TextureID);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	unsigned char* data = stbi_load(texturePath.c_str(), &m_Width, &m_Height, &m_Channels, 0);
 
-	unsigned char* data = stbi_load(texturePath, &m_Width, &m_Height, &m_Channels, 0);
+	if (data)
+	{
+		GLenum format = 0;
+		if (m_Channels == 1)
+			format = GL_RED;
+		else if (m_Channels == 3)
+			format = GL_RGB;
+		else if (m_Channels == 4)
+			format = GL_RGBA;
 
-	int channelEnum = 0;
-	if (m_Channels == 3)
-		channelEnum = GL_RGB;
+		glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		stbi_image_free(data);
+	}
 	else
-		channelEnum = GL_RGBA;
+	{
+		std::cout << "Texture failed to load at path: " << m_Path << std::endl;
+		stbi_image_free(data);
+	}
+}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, channelEnum, m_Width, m_Height, 0, channelEnum, GL_UNSIGNED_BYTE, data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	stbi_image_free(data);
+void Texture::Bind()
+{
+	glBindTexture(GL_TEXTURE_2D, m_TextureID);
 }

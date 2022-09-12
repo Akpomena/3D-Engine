@@ -6,13 +6,33 @@
 #include "./Events/KeyEvent.h"
 #include "./Events/MouseEvent.h"
 
-Window::Window(const char* windowName, int width, int height): m_Height(height), m_Width(width), m_Window(nullptr)
+Window::Window(const char* windowName, int width, int height, bool enableVsync): 
+	m_Height(height), m_Width(width), m_Window(nullptr), m_VSync(enableVsync)
 {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4.0);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4.0);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	Init();
+}
+
+void Window::SetVSync(bool enabled)
+{
+	if (enabled)
+	{
+		glfwSwapInterval(1);
+	}
+	else
+	{
+		glfwSwapInterval(0);
+	}
+
+	m_VSync = enabled;
+}
+
+bool Window::IsVSync() const
+{
+	return m_VSync;
 }
 
 void Window::UpdateWindow()
@@ -28,6 +48,7 @@ void Window::enableCursor(bool enable)
 	else
 		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
+
 
 int Window::Init()
 {
@@ -48,6 +69,7 @@ int Window::Init()
 	}
 
 	glfwSetWindowUserPointer(m_Window, this);
+	SetVSync(true);
 
 	glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) 
 		{

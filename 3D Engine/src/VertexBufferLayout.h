@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <iostream>
 
 #include <glad/glad.h>
 
@@ -15,6 +16,7 @@ struct VertexBufferElement
 		{
 		case GL_FLOAT:          return 4;
 		case GL_UNSIGNED_INT:   return 4;
+		case GL_INT:   return 4;
 		case GL_UNSIGNED_BYTE:  return 1;
 		}
 
@@ -33,7 +35,15 @@ public:
 	template<typename T>
 	void push(unsigned int count)
 	{
+		std::cout << "INVALID TYPE" << std::endl;
 		static_assert(true);
+	}
+
+	template<>
+	void push<int>(unsigned int count)
+	{
+		m_Elements.push_back({ GL_INT, count, GL_FALSE });
+		m_Stride += count * VertexBufferElement::getSizeOfType(GL_INT);
 	}
 
 	template<>

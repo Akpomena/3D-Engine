@@ -68,6 +68,10 @@ vec3 CalcDirLight(DirLight dirLight, vec3 normal, vec3 viewDir);
 vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 viewDir);
 vec3 CalcSpotLight(SpotLight spotLight, vec3 normal, vec3 viewDir);
 
+uniform sampler2D texture_diffuse1;
+uniform sampler2D texture_specular1;
+uniform PointLight u_PointLight;
+
 void main()
 {
 	vec3 norm = normalize(normal);
@@ -92,7 +96,7 @@ void main()
 
 
 	// Spot Light
-	result += CalcSpotLight(u_SpotLight, norm, viewDir);
+	result = CalcPointLight(u_PointLight, norm, viewDir);
 
 	FragColor = vec4(result, 1.0f);
 }
@@ -125,11 +129,11 @@ vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 viewDir)
 
 	// Calculate Specular
 	vec3 reflection = reflect(-lightDir, normal);
-	float spec = pow(max(dot(viewDir, reflection), 0.0f), u_Material.shininess);
+	float spec = pow(max(dot(viewDir, reflection), 0.0f), 32.0f);
 
-	vec3 ambient = pointLight.ambient * texture(u_Material.diffuse, texCoord).rgb;
-	vec3 diffuse = pointLight.diffuse * diff * texture(u_Material.diffuse, texCoord).rgb;
-	vec3 specular = pointLight.specular * spec * texture(u_Material.specular, texCoord).rgb;
+	vec3 ambient = pointLight.ambient * texture(texture_diffuse1, texCoord).rgb;
+	vec3 diffuse = pointLight.diffuse * diff * texture(texture_diffuse1, texCoord).rgb;
+	vec3 specular = pointLight.specular * spec * texture(texture_specular1, texCoord).rgb;
 
 	// Attenuation
 	float Distance = length(pointLight.position - fragPos);

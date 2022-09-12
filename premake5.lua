@@ -16,10 +16,12 @@ IncludeDir["glad"] = "vendor/glad/include"
 IncludeDir["imgui"] = "vendor/imgui"
 IncludeDir["glm"] = "vendor/glm"
 IncludeDir["stb_Image"] = "vendor/stb_Image"
+IncludeDir["assimp"] = "vendor/assimp/include"
 
 include "premake/glfw.lua"
 include "premake/glad.lua"
 include "premake/imgui.lua"
+include "premake/assimp.lua"
 
 
 -- Project file of 3D Engine
@@ -48,7 +50,8 @@ project "3D Engine"
 		"%{IncludeDir.glad}",
 		"%{IncludeDir.imgui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_Image}"
+		"%{IncludeDir.stb_Image}",
+		"%{IncludeDir.assimp}"
 	}
 
 	defines
@@ -61,6 +64,7 @@ project "3D Engine"
 		"ImGui",
 		"Glad",
 		"GLFW",
+		"Assimp",
 		"opengl32.lib"
 	}
 
