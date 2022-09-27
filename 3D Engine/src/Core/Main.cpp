@@ -4,28 +4,28 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-#include "./Shader.h"
-#include "./Camera.h"
-#include "./Texture.h"
+#include "../RenderCore/Shader.h"
+#include "../RenderCore/Camera.h"
+#include "../RenderCore/Texture.h"
 
 #include <imgui.h>
 
-#include "./ImguiManager.h"
+#include "../ImGui/ImguiManager.h"
 
-#include "./Events/Event.h"
-#include "./Events/ApplicationEvent.h"
-#include "./Events/KeyEvent.h"
-#include "./Events/MouseEvent.h"
+#include "../Events/Event.h"
+#include "../Events/ApplicationEvent.h"
+#include "../Events/KeyEvent.h"
+#include "../Events/MouseEvent.h"
 
 #include "glad/glad.h"
 #include "./Window.h"
 
-#include "./VertexArray.h"
-#include "./VertexBuffer.h"
-#include "./VertexBufferLayout.h"
-#include "./IndexBuffer.h"
+#include "../RenderCore/VertexArray.h"
+#include "../RenderCore/VertexBuffer.h"
+#include "../RenderCore/VertexBufferLayout.h"
+#include "../RenderCore/IndexBuffer.h"
 
-#include "./Model.h"
+#include "../RenderCore/Model.h"
 
 void eventHandler(Event& e);
 void processInput(GLFWwindow* window);
@@ -122,21 +122,25 @@ int main()
 	VertexArray boxVertexArray;
 	boxVertexArray.AddBuffer(boxVertexBuffer, boxBufferLayout);
 
-	// Light Source
+	float planeVertices[] = {
+		// positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
+		 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+		-5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
+		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
 
-	glm::vec4 lightPosition = { 1.2f, 1.0f, 2.0f, 1.0f };
-	glm::vec3 lightColor = glm::vec3(1.0f);
+		 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+		 5.0f, -0.5f, -5.0f,  2.0f, 2.0f
+	};
 
-	// Shader
+	VertexArray planeVertexArray;
 
-	Shader boxShader("assets/shaders/BasicVertexShader.vert", "assets/shaders/BasicFragShader.frag");
-	Shader lightShader("assets/shaders/LightVertexShader.vert", "assets/shaders/LightFragShader.frag");
+	VertexBuffer planeVertexBuffer(planeVertices, sizeof(planeVertices));
+	VertexBufferLayout planeBufferLayout;
+	planeBufferLayout.push<float>(3);
+	planeBufferLayout.push<float>(2);
 
-	// Texture
-
-	Texture container("assets/textures/container2.png", 0);
-	Texture containerSpecular("assets/textures/container2_specular.png", 1);
-	Texture emission("assets/textures/matrix.jpg", 2);
+	planeVertexArray.AddBuffer(planeVertexBuffer, planeBufferLayout);
 
 	/***************************/
 
@@ -152,82 +156,10 @@ int main()
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
 	std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
 	
-	// IMGUI
-	
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
-
-	glm::vec3 pointLightPositions[] = {
-		glm::vec3(0.7f,  0.2f,  2.0f),
-		glm::vec3(2.3f, -3.3f, -4.0f),
-		glm::vec3(-4.0f,  2.0f, -12.0f),
-		glm::vec3(0.0f,  0.0f, -3.0f)
-	};
-
-	glm::vec3 pointLightColors[] = {
-		glm::vec3(1.0f),
-		glm::vec3(1.0f),
-		glm::vec3(1.0f),
-		glm::vec3(1.0f)
-	};
-
-	PointLightVariables pointLightVars[4];
-
-	boxShader.Bind();
-	boxShader.SetUniformInt("u_Material.diffuse", 0);
-	boxShader.SetUniformInt("u_Material.specular", 1);
-	boxShader.SetUniformInt("u_Material.emission", 2);
-
-	float spotLightConstant = 1.0f, spotLightLinear = 0.09f, spotLightQuadratic = 0.032f;
-	float cutoff = 12.5f, outterCutoff = 17.5f;
-
-	float shininess = 1.0f;
-
-	glm::vec3 dirLightColor = glm::vec3(1.0f);
-	glm::vec3 dirLightDirection = { -0.2f, -1.0f, -0.3f };
-
-	glm::vec3 spotLightColor = glm::vec3(1.0f);
-	glm::vec4 clearColor = { 0.2f, 0.2f, 0.2f, 0.0f };
-
-	Model backpack("assets/models/backpack/backpack.obj");
+	glm::vec4 clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 	
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
-
-		glm::vec3 diffuseColor = lightColor * 0.5f;
-		glm::vec3 ambientColor = lightColor * 0.2f;
-
-		boxShader.Bind();
-
-		// Setting Point Lights Uniforms
-
-
-		boxShader.SetUniformVec3(("u_PointLight.ambient"), pointLightColors[0] * 0.2f);
-		boxShader.SetUniformVec3(("u_PointLight.diffuse"), pointLightColors[0] * 0.5f);
-		boxShader.SetUniformVec3(("u_PointLight.specular"), pointLightColors[0]);
-
-		boxShader.SetUniformVec3(("u_PointLight.position"), pointLightPositions[0]);
-
-		boxShader.SetUniformFloat(("u_PointLight.constant"), pointLightVars[0].constant);
-		boxShader.SetUniformFloat(("u_PointLight.linear"), pointLightVars[0].linear);
-		boxShader.SetUniformFloat(("u_PointLight.quadratic"), pointLightVars[0].quadratic);
-	
-		//
-		boxShader.SetUniformFloat("u_Material.shininess", 128.0f * shininess);
-
-		boxShader.SetUniformVec3("viewPosition", camera.Position);
-
-		boxShader.SetUniformFloat("u_Time", glfwGetTime());
 
 		// Timer
 
@@ -241,60 +173,17 @@ int main()
 		imguiManager.BeginDraw();
 
 		ImGui::Text("Frame Time: %.3fms  FPS: %d", deltaTime * 1000, FPS);
-		
-		ImGui::ColorEdit4("Clear Color", &clearColor[0]);
-
-
-
-		std::string name = "Point Light";
-		if (ImGui::CollapsingHeader(name.c_str()))
-		{
-			ImGui::ColorEdit3("Light Color", &pointLightColors[0][0]);
-			ImGui::SliderFloat3("Light Position", (float*)&pointLightPositions[0], -10.0f, 10.0f, "%.3f", 1.0f);
-
-			ImGui::InputFloat("Constant", &pointLightVars[0].constant, 0.01, 1, "% .1f");
-			ImGui::InputFloat("Linear", &pointLightVars[0].linear, 0.001, 1, "% .3f");
-			ImGui::InputFloat("Quadratic", &pointLightVars[0].quadratic, 0.001, 1, "% .4f");
-		}
-		
-		//ImGui::InputFloat("Shininess", &shininess, 0.01, 1, "% .3f");
-
-		//ImGui::End();
+		ImGui::ColorPicker4("Clear Color", (float*)&clearColor);
+	
 		imguiManager.EndDraw();
 
 		// per-frame time logic
 		// --------------------
 
 		perspective = glm::perspective(glm::radians(camera.Zoom), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
-		boxShader.SetUniformMat4("u_Perspective", perspective);
 		
 		view = camera.GetViewMatrix();
-		boxShader.SetUniformMat4("u_View", view);
 
-	
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, pointLightPositions[0]);
-		model = glm::scale(model, glm::vec3(0.2f));
-
-		lightShader.Bind();
-
-		lightShader.SetUniformMat4("u_Model", model);
-		lightShader.SetUniformMat4("u_Perspective", perspective);
-		lightShader.SetUniformMat4("u_View", view);
-		lightShader.SetUniformVec3("u_Color", pointLightColors[0]);
-
-		boxVertexArray.bind();
-
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(float));
-
-		boxShader.Bind();
-
-		model = glm::mat4(1.0f);
-		boxShader.SetUniformMat4("u_Model", model);
-		boxShader.SetUniformMat4("u_Perspective", perspective);
-		boxShader.SetUniformMat4("u_View", view);
-
-		backpack.Draw(boxShader);
 
 		/*********************/
 
@@ -380,4 +269,5 @@ void eventHandler(Event& e)
 
 			return true;
 		});
+
 }

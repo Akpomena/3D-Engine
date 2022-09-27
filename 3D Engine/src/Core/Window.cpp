@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-#include "./Events/ApplicationEvent.h"
-#include "./Events/KeyEvent.h"
-#include "./Events/MouseEvent.h"
+#include "../Events/ApplicationEvent.h"
+#include "../Events/KeyEvent.h"
+#include "../Events/MouseEvent.h"
 
 Window::Window(const char* windowName, int width, int height, bool enableVsync): 
 	m_Height(height), m_Width(width), m_Window(nullptr), m_VSync(enableVsync)

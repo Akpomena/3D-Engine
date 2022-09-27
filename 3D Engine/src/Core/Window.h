@@ -2,7 +2,7 @@
 
 #include "GlFW/glfw3.h"
 #include <functional>
-#include "./Events/Event.h"
+#include "../Events/Event.h"
 
 class Window
 {
