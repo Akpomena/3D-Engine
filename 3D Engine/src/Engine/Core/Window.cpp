@@ -2,12 +2,15 @@
 
 #include <iostream>
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "../Events/ApplicationEvent.h"
 #include "../Events/KeyEvent.h"
 #include "../Events/MouseEvent.h"
 
-Window::Window(const char* windowName, int width, int height, bool enableVsync): 
-	m_Height(height), m_Width(width), m_Window(nullptr), m_VSync(enableVsync)
+Window::Window(WindowProps props):
+	m_Props(props), m_Window(nullptr)
 {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4.0);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4.0);
@@ -35,7 +38,7 @@ bool Window::IsVSync() const
 	return m_VSync;
 }
 
-void Window::UpdateWindow()
+void Window::Update()
 {
 	glfwPollEvents();
 	glfwSwapBuffers(m_Window);
@@ -58,7 +61,7 @@ int Window::Init()
 		return -1;
 	}
 
-	m_Window = glfwCreateWindow(m_Width, m_Height, "3D Engine", nullptr, nullptr);
+	m_Window = glfwCreateWindow(m_Props.Width, m_Props.Height, m_Props.Title.c_str(), nullptr, nullptr);
 
 
 	if (!m_Window)
@@ -73,46 +76,46 @@ int Window::Init()
 
 	glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) 
 		{
-			Window currentWindow = *static_cast<Window*>(glfwGetWindowUserPointer(window));
+			Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
 
 			switch (action)
 			{
 				case GLFW_PRESS:
 				{
 					KeyPressedEvent event(key, 0);
-					currentWindow.m_EventFunction(event);
+					currentWindow->m_EventFunction(event);
 					break;
 				}
 				case GLFW_REPEAT:
 				{
 					KeyPressedEvent event(key, 1);
-					currentWindow.m_EventFunction(event);
+					currentWindow->m_EventFunction(event);
 					break;
 				}
 				case GLFW_RELEASE:
 				{
 					KeyReleasedEvent event(key);
-					currentWindow.m_EventFunction(event);
+					currentWindow->m_EventFunction(event);
 				}
 			}
 		});
 
 	glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 		{
-			Window currentWindow = *static_cast<Window*>(glfwGetWindowUserPointer(window));
+			Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
 
 			switch (action)
 			{
 				case GLFW_PRESS:
 				{
 					MouseButtonPressedEvent event(button);
-					currentWindow.m_EventFunction(event);
+					currentWindow->m_EventFunction(event);
 					break;
 				}
 				case GLFW_RELEASE:
 				{
 					MouseButtonReleasedEvent event(button);
-					currentWindow.m_EventFunction(event);
+					currentWindow->m_EventFunction(event);
 					break;
 				}
 			}
@@ -120,25 +123,49 @@ int Window::Init()
 
 	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos)
 		{
-			Window currentWindow = *static_cast<Window*>(glfwGetWindowUserPointer(window));
+			Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
 
 			MouseMovedEvent event(xpos, ypos);
-			currentWindow.m_EventFunction(event);
+			currentWindow->m_EventFunction(event);
 		});
 
 	glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xoffset, double yoffset)
 		{
-			Window currentWindow = *static_cast<Window*>(glfwGetWindowUserPointer(window));
+			Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
 
 			MouseScrolledEvent event(xoffset, yoffset);
-			currentWindow.m_EventFunction(event);
+			currentWindow->m_EventFunction(event);
 		});
 
+	glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
+		{
+			Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+			WindowCloseEvent event;
+			currentWindow->m_EventFunction(event);
+		});
+
+	glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
+		{
+			Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+			WindowResizeEvent event(width, height);
+			currentWindow->m_EventFunction(event);
+		});
 
 	// Should be removed later
 	glfwMakeContextCurrent(m_Window);
 
-	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+//	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	// Temporary
+
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "FAILED TO INITIALIZE GLAD" << std::endl;
+		return -1;
+	}
+
 
 	return 0;
 }

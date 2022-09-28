@@ -23,12 +23,11 @@ include "premake/glad.lua"
 include "premake/imgui.lua"
 include "premake/assimp.lua"
 
-
 -- Project file of 3D Engine
 
 project "3D Engine"
 	location "3D Engine"
-	kind "ConsoleApp"
+	kind "StaticLib"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
@@ -39,7 +38,6 @@ project "3D Engine"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/assets/shaders/**",
 		"%{prj.name}/src/**.cpp",
 		"vendor/stb_Image/**.cpp"
 	}
@@ -78,3 +76,53 @@ project "3D Engine"
 	filter "configurations:Release"
 		runtime "Release"
 		optimize "On"
+
+
+
+-- Project file of Sandbox
+
+project "SandBox"
+	location "Sandbox"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++20"
+	staticruntime "on"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}") 
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}") 
+
+	files
+	{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp",
+	}
+
+	includedirs
+	{
+		"%{IncludeDir.imgui}",
+		"%{IncludeDir.glm}",
+		"3D Engine/src"
+	}
+
+	defines
+	{	
+		"_CRT_SECURE_NO_WARNINGS"
+	}
+
+	links
+	{
+		"3D Engine"
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+	filter "configurations:Debug"
+		runtime "Debug"
+		symbols "On"
+		
+	filter "configurations:Release"
+		runtime "Release"
+		optimize "On"
+
+		

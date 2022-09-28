@@ -193,7 +193,7 @@ int main()
 
 		/***************/
 
-		window.UpdateWindow();
+		window.Update();
 
 		/* Rendering goes here*/
 		glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
