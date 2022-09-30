@@ -1,6 +1,6 @@
 
 #include "Application.h"
-//#include "Blitz/Renderer/Renderer.h"
+#include "../Renderer/Renderer.h"
 
 #include "../Events/KeyEvent.h"
 #include <GLFW/glfw3.h>
@@ -20,7 +20,7 @@ namespace Engine {
 
 		m_Window = std::make_unique<Window>(WindowProps(name));
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
-		/*Renderer::Init();*/
+		Renderer::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlayer(m_ImGuiLayer);

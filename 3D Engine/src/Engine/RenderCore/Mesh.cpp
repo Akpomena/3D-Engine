@@ -1,5 +1,5 @@
 #include "./Mesh.h"
-
+#include "./VertexBufferLayout.h"
 
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
@@ -9,6 +9,13 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     this->textures = textures;
 
     // now that we have all the required data, set the vertex buffers and its attribute pointers.
+    setupMesh();
+}
+
+Mesh::Mesh(std::vector<Vertex> vertices)
+{
+    this->vertices = vertices;
+
     setupMesh();
 }
 
@@ -44,8 +51,8 @@ void Mesh::Draw(Shader& shader)
 
     // draw mesh
     m_VertexArray->bind();
-    glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, 0);
-    //glDrawArrays(GL_TRIANGLES, 0, vertices.size() * 22);
+    //glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLES, 0, vertices.size() * 88);
    // glBindVertexArray(0);
 
     // always good practice to set everything back to defaults once configured.
@@ -69,7 +76,7 @@ void Mesh::setupMesh()
    
     m_VertexArray->AddBuffer(*m_VertexBuffer, layout);
 
-    m_IndexBuffer = std::make_unique<IndexBuffer>(&indices[0], indices.size());
+   // m_IndexBuffer = std::make_unique<IndexBuffer>(&indices[0], indices.size());
 
     glBindVertexArray(0);
 }

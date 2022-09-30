@@ -1,7 +1,8 @@
 #include "Camera.h"
 
-Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
+Camera::Camera(Window* window, glm::vec3 position, glm::vec3 up, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
 {
+    m_Window = window;
     Position = position;
     WorldUp = up;
     Yaw = yaw;
@@ -22,6 +23,16 @@ Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float u
 glm::mat4 Camera::GetViewMatrix()
 {
     return glm::lookAt(Position, Position + Front, Up);
+}
+
+glm::mat4 Camera::GetProjMatrix()
+{
+    return glm::perspective(glm::radians(Zoom), (float)m_Window->GetWidth()/m_Window->GetHeight(), 0.1f, 100.0f);
+}
+
+glm::mat4 Camera::GetProjViewMatrix()
+{
+    return glm::perspective(glm::radians(Zoom), (float)m_Window->GetWidth() / m_Window->GetHeight(), 0.1f, 100.0f) * glm::lookAt(Position, Position + Front, Up);
 }
 
 // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)

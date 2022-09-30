@@ -98,7 +98,7 @@ void main()
 	// Spot Light
 	result = CalcPointLight(u_PointLight, norm, viewDir);
 
-	FragColor = vec4(result, 1.0f);
+	FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 }
 
 

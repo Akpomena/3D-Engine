@@ -3,7 +3,7 @@
 #include <functional>
 #include "../Events/Event.h"
 
-extern struct GLFWwindow;
+struct GLFWwindow;
 
 struct WindowProps
 {
@@ -30,8 +30,8 @@ public:
 	void Update();
 	void enableCursor(bool enable);
 
-	float GetWidth() { return m_Props.Width; }
-	float GetHeight() { return m_Props.Height; }
+	unsigned int GetWidth() { return m_Props.Width; }
+	unsigned int GetHeight() { return m_Props.Height; }
 
 	void SetVSync(bool enable);
 	bool IsVSync() const;

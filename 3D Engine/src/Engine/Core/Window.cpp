@@ -12,8 +12,9 @@
 Window::Window(WindowProps props):
 	m_Props(props), m_Window(nullptr)
 {
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4.0);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4.0);
+	// TODO( GOOGLE THIS)
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	Init();
@@ -156,16 +157,7 @@ int Window::Init()
 	// Should be removed later
 	glfwMakeContextCurrent(m_Window);
 
-//	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	// Temporary
-
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "FAILED TO INITIALIZE GLAD" << std::endl;
-		return -1;
-	}
-
+	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	return 0;
 }
