@@ -72,6 +72,16 @@ uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
 uniform PointLight u_PointLight;
 
+float near = 0.1; 
+float far  = 100.0; 
+  
+float LinearizeDepth(float depth) 
+{
+    float z = depth * 2.0 - 1.0; // back to NDC 
+    return (2.0 * near * far) / (far + near - z * (far - near));	
+}
+
+
 void main()
 {
 	vec3 norm = normalize(normal);
@@ -98,7 +108,8 @@ void main()
 	// Spot Light
 	result = CalcPointLight(u_PointLight, norm, viewDir);
 
-	FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	float depth = LinearizeDepth(gl_FragCoord.z) / far; // divide by far for demonstration
+    FragColor = vec4(vec3(depth), 1.0);
 }
 
 

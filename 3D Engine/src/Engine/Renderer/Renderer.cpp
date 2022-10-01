@@ -11,6 +11,9 @@ void Engine::Renderer::Init()
 {
 	int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	assert(status);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 }
 
 void Engine::Renderer::BeginScene(Camera& camera, Shader& shader)
@@ -38,5 +41,5 @@ void Engine::Renderer::SetClearColor(glm::vec4 color)
 
 void Engine::Renderer::Clear()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

@@ -12,15 +12,17 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     setupMesh();
 }
 
-Mesh::Mesh(std::vector<Vertex> vertices)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<Texture> textures)
 {
     this->vertices = vertices;
+    this->textures = textures;
 
     setupMesh();
 }
 
 void Mesh::Draw(Shader& shader)
 {
+    shader.Bind();
     // bind appropriate texturesstd::vector
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
@@ -43,11 +45,18 @@ void Mesh::Draw(Shader& shader)
             number = std::to_string(heightNr++); // transfer unsigned int to string
 
         // now set the sampler to the correct texture unit
-        shader.Bind();
         shader.SetUniformInt((name + number), i);
         // and finally bind the texture
         textures[i].Bind();
     }
+
+    // Setting Transform
+    glm::mat4 transform = glm::mat4(1.0f);
+    transform = glm::translate(transform, m_Position);
+   // transform = glm::rotate()
+    transform = glm::scale(transform, m_Scale);
+
+    shader.SetUniformMat4("u_Model", transform);
 
     // draw mesh
     m_VertexArray->bind();

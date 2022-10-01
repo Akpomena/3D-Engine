@@ -51,49 +51,94 @@ void SandBoxLayer::OnAttach()
 		{-0.5f,  0.5f, -0.5f}
 	};
 
+	glm::vec2 textures[] = {
+		// positions        
+		{0.0f, 0.0f},
+		{1.0f, 0.0f},
+		{1.0f, 1.0f},
+		{1.0f, 1.0f},
+		{0.0f, 1.0f},
+		{0.0f, 0.0f},
+
+		{0.0f, 0.0f},
+		{1.0f, 0.0f},
+		{1.0f, 1.0f},
+		{1.0f, 1.0f},
+		{0.0f, 1.0f},
+		{0.0f, 0.0f},
+
+		{1.0f, 0.0f},
+		{1.0f, 1.0f},
+		{0.0f, 1.0f},
+		{0.0f, 1.0f},
+		{0.0f, 0.0f},
+		{1.0f, 0.0f},
+
+		{ 1.0f, 0.0f},
+		{ 1.0f, 1.0f},
+		{ 0.0f, 1.0f},
+		{ 0.0f, 1.0f},
+		{ 0.0f, 0.0f},
+		{ 1.0f, 0.0f},
+
+		{0.0f, 1.0f},
+		{1.0f, 1.0f},
+		{1.0f, 0.0f},
+		{1.0f, 0.0f},
+		{0.0f, 0.0f},
+		{0.0f, 1.0f},
+
+		{0.0f, 1.0f},
+		{1.0f, 1.0f},
+		{1.0f, 0.0f},
+		{1.0f, 0.0f},
+		{0.0f, 0.0f},
+		{0.0f, 1.0f}
+	};
+
 	float vertices[] = {
 		  // normals           // texture coords
-		  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-		  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-		  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-		  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-		  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-		  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+		  0.0f,  0.0f, -1.0f,  
+		  0.0f,  0.0f, -1.0f,  
+		  0.0f,  0.0f, -1.0f,  
+		  0.0f,  0.0f, -1.0f,  
+		  0.0f,  0.0f, -1.0f,  
+		  0.0f,  0.0f, -1.0f,  
 
-		  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-		  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
-		  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-		  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-		  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
-		  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+		  0.0f,  0.0f, 1.0f,   
+		  0.0f,  0.0f, 1.0f,   
+		  0.0f,  0.0f, 1.0f,   
+		  0.0f,  0.0f, 1.0f,   
+		  0.0f,  0.0f, 1.0f,   
+		  0.0f,  0.0f, 1.0f,   
 
-		 -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-		 -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-		 -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		 -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		 -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-		 -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+		 -1.0f,  0.0f,  0.0f,  
+		 -1.0f,  0.0f,  0.0f,  
+		 -1.0f,  0.0f,  0.0f,  
+		 -1.0f,  0.0f,  0.0f,  
+		 -1.0f,  0.0f,  0.0f,  
+		 -1.0f,  0.0f,  0.0f,  
 
-		  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-		  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-		  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-		  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+		  1.0f,  0.0f,  0.0f,  
+		  1.0f,  0.0f,  0.0f,  
+		  1.0f,  0.0f,  0.0f,  
+		  1.0f,  0.0f,  0.0f,  
+		  1.0f,  0.0f,  0.0f,  
+		  1.0f,  0.0f,  0.0f,  
 
-		  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-		  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-		  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-		  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-		  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-		  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+		  0.0f, -1.0f,  0.0f,  
+		  0.0f, -1.0f,  0.0f,  
+		  0.0f, -1.0f,  0.0f,  
+		  0.0f, -1.0f,  0.0f,  
+		  0.0f, -1.0f,  0.0f,  
+		  0.0f, -1.0f,  0.0f,  
 
-		  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-		  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-		  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-		  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-		  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-		  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
+		  0.0f,  1.0f,  0.0f,  
+		  0.0f,  1.0f,  0.0f,  
+		  0.0f,  1.0f,  0.0f,  
+		  0.0f,  1.0f,  0.0f,  
+		  0.0f,  1.0f,  0.0f,  
+		  0.0f,  1.0f,  0.0f,  
 	};
 
 	std::vector<Vertex> Vertices;
@@ -102,10 +147,57 @@ void SandBoxLayer::OnAttach()
 	{
 		Vertex v;
 		v.Position = positions[i];
+		v.TexCoords = textures[i];
 		Vertices.push_back(v);
 	}
 
-	m_Mesh = std::make_unique<Mesh>(Vertices);
+	Texture boxTex("assets/textures/box.png", 0, "texture_diffuse");
+	std::vector<Texture> tex;
+	tex.push_back(boxTex);
+
+	m_Mesh.push_back(std::make_unique<Mesh>(Vertices, tex));
+	m_Mesh.push_back(std::make_unique<Mesh>(Vertices, tex));
+
+	glm::vec3 planePositions[] = {
+		// positions         
+		{ 5.0f, -0.5f,  5.0f},
+		{-5.0f, -0.5f,  5.0f},
+		{-5.0f, -0.5f, -5.0f},
+		
+		{ 5.0f, -0.5f,  5.0f},
+		{-5.0f, -0.5f, -5.0f},
+		{ 5.0f, -0.5f, -5.0f}
+	};
+
+	glm::vec2 planeTextures[] = {
+		// texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
+		{2.0f, 0.0f},
+		{0.0f, 0.0f},
+		{0.0f, 2.0f},
+	
+		{2.0f, 0.0f},
+		{0.0f, 2.0f},
+		{2.0f, 2.0f}
+	};
+
+	Vertices.clear();
+
+	for (int i = 0; i < 6; i++)
+	{
+		Vertex v;
+		v.Position = planePositions[i];
+		v.TexCoords = planeTextures[i];
+		Vertices.push_back(v);
+	}
+
+	Texture floorTex("assets/textures/marble.png", 0, "texture_diffuse");
+	tex.clear();
+	tex.push_back(floorTex);
+
+	m_Mesh.push_back(std::make_unique<Mesh>(Vertices, tex));
+
+	m_Mesh[0]->SetPosition({ -1.0f, 0.0f, -1.0f });
+	m_Mesh[1]->SetPosition({ 2.0f, 0.0f, 0.0f });
 
 	m_Shader = std::make_unique<Shader>("assets/shaders/BasicVertexShader.vert", "assets/shaders/BasicFragShader.frag");
 }
@@ -133,10 +225,8 @@ void SandBoxLayer::OnUpdate(float ts)
 
 	Engine::Renderer::BeginScene(*m_Camera, *m_Shader);
 
-	glm::mat4 model = glm::mat4(1.0f);
-	m_Shader->SetUniformMat4("u_Model", model);
-
-	Engine::Renderer::Draw(*m_Mesh);
+	for(auto& mesh: m_Mesh)
+		Engine::Renderer::Draw(*mesh);
 	//Engine::Renderer::EndScene();
 }
 

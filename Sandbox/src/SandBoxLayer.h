@@ -12,7 +12,7 @@ public:
 	virtual void OnImGuiRender() override;
 private:
 	std::unique_ptr<Camera> m_Camera;
-	std::unique_ptr<Mesh> m_Mesh;
+	std::vector<std::unique_ptr<Mesh>> m_Mesh;
 	std::unique_ptr<Shader> m_Shader;
 	glm::vec4 m_ClearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 };
