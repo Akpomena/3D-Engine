@@ -101,6 +101,7 @@ project "SandBox"
 	{
 		"%{IncludeDir.imgui}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.glad}",
 		"3D Engine/src"
 	}
 

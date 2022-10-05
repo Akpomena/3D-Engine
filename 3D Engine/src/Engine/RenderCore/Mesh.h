@@ -45,8 +45,9 @@
         // render the mesh
         void Draw(Shader& shader);
 
-        // Update position
+        // Update Transforms
         void SetPosition(glm::vec3&& pos) { m_Position = pos; }
+        void SetScale(glm::vec3&& scale) { m_Scale = scale; }
 
     private:
         // Transform

@@ -1,6 +1,7 @@
 #include "SandBoxLayer.h"
 
 #include <imgui.h>
+#include <glad/glad.h>
 
 void SandBoxLayer::OnAttach()
 {
@@ -199,7 +200,8 @@ void SandBoxLayer::OnAttach()
 	m_Mesh[0]->SetPosition({ -1.0f, 0.0f, -1.0f });
 	m_Mesh[1]->SetPosition({ 2.0f, 0.0f, 0.0f });
 
-	m_Shader = std::make_unique<Shader>("assets/shaders/BasicVertexShader.vert", "assets/shaders/BasicFragShader.frag");
+	m_Shader[0] = std::make_unique<Shader>("assets/shaders/BasicVertexShader.vert", "assets/shaders/BasicFragShader.frag");
+	m_Shader[1] = std::make_unique<Shader>("assets/shaders/BasicVertexShader.vert", "assets/shaders/SolidColor.frag");
 }
 
 void SandBoxLayer::OnDetach()
@@ -208,7 +210,7 @@ void SandBoxLayer::OnDetach()
 
 void SandBoxLayer::OnUpdate(float ts)
 {
-
+	// Camera Controls
 	if (Engine::Input::IsKeyPressed(KEY_W))
 		m_Camera->ProcessKeyboard(FORWARD, ts);
 	if (Engine::Input::IsKeyPressed(KEY_S))
@@ -218,15 +220,49 @@ void SandBoxLayer::OnUpdate(float ts)
 	if (Engine::Input::IsKeyPressed(KEY_D))
 		m_Camera->ProcessKeyboard(RIGHT, ts);
 
-	m_Shader->Bind();
+	// Rendering
+	glEnable(GL_DEPTH_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 	Engine::Renderer::SetClearColor(m_ClearColor);
 	Engine::Renderer::Clear();
 
-	Engine::Renderer::BeginScene(*m_Camera, *m_Shader);
+	Engine::Renderer::BeginScene(*m_Camera, *m_Shader[0]);
 
-	for(auto& mesh: m_Mesh)
-		Engine::Renderer::Draw(*mesh);
+	glStencilMask(0x00);
+	m_Shader[0]->Bind();
+	
+	Engine::Renderer::Draw(*m_Mesh[2]);
+
+	glStencilMask(0xFF);
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+
+
+	m_Mesh[0]->SetScale({ 1.0f, 1.0f, 1.0f });
+	m_Mesh[1]->SetScale({ 1.0f, 1.0f, 1.0f });
+
+	Engine::Renderer::Draw(*m_Mesh[0]);
+	Engine::Renderer::Draw(*m_Mesh[1]);
+
+	
+	Engine::Renderer::BeginScene(*m_Camera, *m_Shader[1]);
+
+	glStencilMask(0x00);
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glDisable(GL_DEPTH_TEST);
+
+	m_Shader[1]->Bind();
+
+	m_Mesh[0]->SetScale({ 1.2f, 1.2f, 1.2f });
+	m_Mesh[1]->SetScale({ 1.2f, 1.2f, 1.2f });
+
+	Engine::Renderer::Draw(*m_Mesh[0]);
+	Engine::Renderer::Draw(*m_Mesh[1]);
+
+	glStencilMask(0xFF);
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glEnable(GL_DEPTH_TEST);
+
 	//Engine::Renderer::EndScene();
 }
 
