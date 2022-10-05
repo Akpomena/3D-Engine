@@ -14,6 +14,8 @@
 #include <memory>
 
 
+namespace Engine {
+
 #define MAX_BONE_INFLUENCE 4
 
     struct Vertex {
@@ -47,12 +49,17 @@
 
         // Update Transforms
         void SetPosition(glm::vec3&& pos) { m_Position = pos; }
+        void SetPosition(glm::vec3& pos) { m_Position = pos; }
+
         void SetScale(glm::vec3&& scale) { m_Scale = scale; }
+
+        // Retrieve Transforms
+        const glm::vec3& GetPosition() { return m_Position; }
 
     private:
         // Transform
         glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
-        glm::vec3 m_Scale = { 1.0f, 1.0f, 1.0f }; 
+        glm::vec3 m_Scale = { 1.0f, 1.0f, 1.0f };
         glm::vec3 m_Rotation = { 0.0f, 0.0f, 0.0f };
 
         // mesh Data
@@ -70,4 +77,5 @@
         // initializes all the buffer objects/arrays
         void setupMesh();
     };
-   
+
+}

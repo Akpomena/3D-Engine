@@ -142,11 +142,11 @@ void SandBoxLayer::OnAttach()
 		  0.0f,  1.0f,  0.0f,  
 	};
 
-	std::vector<Vertex> Vertices;
+	std::vector<Engine::Vertex> Vertices;
 
 	for (int i = 0; i < 36; i++)
 	{
-		Vertex v;
+		Engine::Vertex v;
 		v.Position = positions[i];
 		v.TexCoords = textures[i];
 		Vertices.push_back(v);
@@ -156,8 +156,8 @@ void SandBoxLayer::OnAttach()
 	std::vector<Texture> tex;
 	tex.push_back(boxTex);
 
-	m_Mesh.push_back(std::make_unique<Mesh>(Vertices, tex));
-	m_Mesh.push_back(std::make_unique<Mesh>(Vertices, tex));
+	m_Mesh.push_back(std::make_unique<Engine::Mesh>(Vertices, tex));
+	m_Mesh.push_back(std::make_unique<Engine::Mesh>(Vertices, tex));
 
 	glm::vec3 planePositions[] = {
 		// positions         
@@ -172,20 +172,42 @@ void SandBoxLayer::OnAttach()
 
 	glm::vec2 planeTextures[] = {
 		// texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
-		{2.0f, 0.0f},
+		{1.0f, 0.0f},
 		{0.0f, 0.0f},
-		{0.0f, 2.0f},
+		{0.0f, 1.0f},
 	
-		{2.0f, 0.0f},
-		{0.0f, 2.0f},
-		{2.0f, 2.0f}
+		{1.0f, 0.0f},
+		{0.0f, 1.0f},
+		{1.0f, 1.0f}
+	};
+
+	glm::vec3 vegPositions[] = {
+		// positions         
+		{ 0.0f,  0.5f, 0.0f},
+		{ 0.0f, -0.5f, 0.0f},
+		{ 1.0f, -0.5f, 0.0f},
+						 
+		{ 0.0f,  0.5f, 0.0f},
+		{ 1.0f, -0.5f, 0.0f},
+		{ 1.0f,  0.5f, 0.0f}
+	};
+
+	glm::vec2 vegTextures[] = {
+		// texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
+		{0.0f, 1.0f},
+		{0.0f, 0.0f},
+		{1.0f, 0.0f},
+
+		{0.0f, 1.0f},
+		{1.0f, 0.0f},
+		{1.0f, 1.0f}
 	};
 
 	Vertices.clear();
 
 	for (int i = 0; i < 6; i++)
 	{
-		Vertex v;
+		Engine::Vertex v;
 		v.Position = planePositions[i];
 		v.TexCoords = planeTextures[i];
 		Vertices.push_back(v);
@@ -195,10 +217,42 @@ void SandBoxLayer::OnAttach()
 	tex.clear();
 	tex.push_back(floorTex);
 
-	m_Mesh.push_back(std::make_unique<Mesh>(Vertices, tex));
+	m_Mesh.push_back(std::make_unique<Engine::Mesh>(Vertices, tex));
 
 	m_Mesh[0]->SetPosition({ -1.0f, 0.0f, -1.0f });
 	m_Mesh[1]->SetPosition({ 2.0f, 0.0f, 0.0f });
+
+	// Grasses
+	Vertices.clear();
+
+	for (int i = 0; i < 6; i++)
+	{
+		Engine::Vertex v;
+		v.Position = vegPositions[i];
+		v.TexCoords = vegTextures[i];
+		Vertices.push_back(v);
+	}
+
+	Texture grassTex("assets/textures/window.png", 0, "texture_diffuse");
+	tex.clear();
+	tex.push_back(grassTex);
+
+	std::vector<glm::vec3> vegetation;
+	vegetation.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
+	vegetation.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
+	vegetation.push_back(glm::vec3(0.0f, 0.0f, 0.7f));
+	vegetation.push_back(glm::vec3(-0.3f, 0.0f, -2.3f));
+	vegetation.push_back(glm::vec3(0.5f, 0.0f, -0.6f));
+
+	int i = 0;
+
+	for (auto& loc : vegetation)
+	{
+		m_Windows.push_back(std::make_unique<Engine::Mesh>(Vertices, tex));
+		m_Windows[i]->SetPosition(loc);
+
+		i++;
+	}
 
 	m_Shader[0] = std::make_unique<Shader>("assets/shaders/BasicVertexShader.vert", "assets/shaders/BasicFragShader.frag");
 	m_Shader[1] = std::make_unique<Shader>("assets/shaders/BasicVertexShader.vert", "assets/shaders/SolidColor.frag");
@@ -221,47 +275,26 @@ void SandBoxLayer::OnUpdate(float ts)
 		m_Camera->ProcessKeyboard(RIGHT, ts);
 
 	// Rendering
-	glEnable(GL_DEPTH_TEST);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
 	Engine::Renderer::SetClearColor(m_ClearColor);
 	Engine::Renderer::Clear();
 
 	Engine::Renderer::BeginScene(*m_Camera, *m_Shader[0]);
 
-	glStencilMask(0x00);
+	std::map<float, int> sorted;
+
+	for (int i = 0; i < m_Windows.size(); i++)
+	{
+		float distance = glm::length(m_Camera->Position - m_Windows[i]->GetPosition());
+		sorted[distance] = i;
+	}
+
 	m_Shader[0]->Bind();
 	
-	Engine::Renderer::Draw(*m_Mesh[2]);
+	for(auto& mesh: m_Mesh)
+		Engine::Renderer::Draw(*mesh);
 
-	glStencilMask(0xFF);
-	glStencilFunc(GL_ALWAYS, 1, 0xFF);
-
-
-	m_Mesh[0]->SetScale({ 1.0f, 1.0f, 1.0f });
-	m_Mesh[1]->SetScale({ 1.0f, 1.0f, 1.0f });
-
-	Engine::Renderer::Draw(*m_Mesh[0]);
-	Engine::Renderer::Draw(*m_Mesh[1]);
-
-	
-	Engine::Renderer::BeginScene(*m_Camera, *m_Shader[1]);
-
-	glStencilMask(0x00);
-	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-	glDisable(GL_DEPTH_TEST);
-
-	m_Shader[1]->Bind();
-
-	m_Mesh[0]->SetScale({ 1.2f, 1.2f, 1.2f });
-	m_Mesh[1]->SetScale({ 1.2f, 1.2f, 1.2f });
-
-	Engine::Renderer::Draw(*m_Mesh[0]);
-	Engine::Renderer::Draw(*m_Mesh[1]);
-
-	glStencilMask(0xFF);
-	glStencilFunc(GL_ALWAYS, 1, 0xFF);
-	glEnable(GL_DEPTH_TEST);
+	for (std::map<float, int>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); it++)
+		Engine::Renderer::Draw(*m_Windows[it->second]);
 
 	//Engine::Renderer::EndScene();
 }

@@ -1,18 +1,18 @@
 #include "./Model.h"
 
 
-Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
+Engine::Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
 {
     loadModel(path);
 }
 
-void Model::Draw(Shader& shader)
+void Engine::Model::Draw(Shader& shader)
 {
     for (unsigned int i = 0; i < meshes.size(); i++)
         meshes[i].Draw(shader);
 }
 
-void Model::loadModel(std::string const& path)
+void Engine::Model::loadModel(std::string const& path)
 {
     // read file via ASSIMP
     Assimp::Importer importer;
@@ -30,7 +30,7 @@ void Model::loadModel(std::string const& path)
     processNode(scene->mRootNode, scene);
 }
 
-void Model::processNode(aiNode* node, const aiScene* scene)
+void Engine::Model::processNode(aiNode* node, const aiScene* scene)
 {
     // process each mesh located at the current node
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -48,7 +48,7 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 
 }
 
-Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
+Engine::Mesh Engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     // data to fill
     std::vector<Vertex> vertices;
@@ -132,7 +132,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     return Mesh(vertices, indices, textures);
 }
 
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+std::vector<Texture> Engine::Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 {
     std::vector<Texture> textures;
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)

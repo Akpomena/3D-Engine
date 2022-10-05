@@ -2,7 +2,7 @@
 #include "./VertexBufferLayout.h"
 
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
+Engine::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
 {
     this->vertices = vertices;
     this->indices = indices;
@@ -12,7 +12,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     setupMesh();
 }
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<Texture> textures)
+Engine::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<Texture> textures)
 {
     this->vertices = vertices;
     this->textures = textures;
@@ -20,7 +20,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<Texture> textures)
     setupMesh();
 }
 
-void Mesh::Draw(Shader& shader)
+void Engine::Mesh::Draw(Shader& shader)
 {
     shader.Bind();
     // bind appropriate texturesstd::vector
@@ -68,7 +68,7 @@ void Mesh::Draw(Shader& shader)
     glActiveTexture(GL_TEXTURE0);
 }
 
-void Mesh::setupMesh()
+void Engine::Mesh::setupMesh()
 {
     m_VertexArray = std::make_unique<VertexArray>();
 

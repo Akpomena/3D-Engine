@@ -16,6 +16,9 @@ void Engine::Renderer::Init()
 	glDepthFunc(GL_LESS);
 
 	glEnable(GL_STENCIL_TEST);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void Engine::Renderer::BeginScene(Camera& camera, Shader& shader)
