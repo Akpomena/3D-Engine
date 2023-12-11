@@ -62,7 +62,7 @@ void Engine::Mesh::Draw(Shader& shader)
     m_VertexArray->bind();
     //glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, 0);
     glDrawArrays(GL_TRIANGLES, 0, vertices.size() * 88);
-   // glBindVertexArray(0);
+    //glBindVertexArray(0);
 
     // always good practice to set everything back to defaults once configured.
     glActiveTexture(GL_TEXTURE0);

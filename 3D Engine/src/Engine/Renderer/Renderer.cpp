@@ -28,6 +28,7 @@ void Engine::Renderer::Init()
 void Engine::Renderer::BeginScene(Camera& camera, Shader& shader)
 {
 	m_Shader = &shader;
+	m_Shader->Bind();
 
 	m_Shader->SetUniformMat4("u_Projection", camera.GetProjMatrix());
 	m_Shader->SetUniformMat4("u_View", camera.GetViewMatrix());

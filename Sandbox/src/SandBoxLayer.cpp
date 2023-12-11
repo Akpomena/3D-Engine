@@ -3,6 +3,8 @@
 #include <imgui.h>
 #include <glad/glad.h>
 
+std::unique_ptr<VertexArray> quadVAO;
+
 void SandBoxLayer::OnAttach()
 {
 	m_Camera = std::make_unique<Camera>(&Engine::Application::Get().GetWindow(), glm::vec3(0.0f, 0.0f, 3.0f));
@@ -261,6 +263,33 @@ void SandBoxLayer::OnAttach()
 
 	m_Shader[0] = std::make_unique<Shader>("assets/shaders/BasicVertexShader.vert", "assets/shaders/BasicFragShader.frag");
 	m_Shader[1] = std::make_unique<Shader>("assets/shaders/BasicVertexShader.vert", "assets/shaders/SolidColor.frag");
+	m_Shader[2] = std::make_unique<Shader>("assets/shaders/ScreenShader.vert", "assets/shaders/ScreenShader.frag");
+
+
+	float verts[] = {
+		// positions   // texCoords
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f
+	};
+
+	quadVAO = std::make_unique<VertexArray>();
+	VertexBuffer buf(&verts, sizeof(verts));
+	VertexBufferLayout layout;
+	layout.push<float>(2);
+	layout.push<float>(2);
+
+	quadVAO->AddBuffer(buf, layout);
+	glBindVertexArray(0);
+	
+	int width = Engine::Application::Get().GetWindow().GetWidth();
+	int height = Engine::Application::Get().GetWindow().GetHeight();
+
+	m_FrameBuffer = std::make_unique<Engine::FrameBuffer>(width, height);
 }
 
 void SandBoxLayer::OnDetach()
@@ -280,6 +309,11 @@ void SandBoxLayer::OnUpdate(float ts)
 		m_Camera->ProcessKeyboard(RIGHT, ts);
 
 	// Rendering
+
+	// first pass
+	m_FrameBuffer->Bind();
+	glEnable(GL_DEPTH_TEST);
+
 	Engine::Renderer::SetClearColor(m_ClearColor);
 	Engine::Renderer::Clear();
 
@@ -293,8 +327,6 @@ void SandBoxLayer::OnUpdate(float ts)
 		sorted[distance] = i;
 	}
 
-	m_Shader[0]->Bind();
-	
 	for(auto& mesh: m_Mesh)
 		Engine::Renderer::Draw(*mesh);
 
@@ -302,6 +334,19 @@ void SandBoxLayer::OnUpdate(float ts)
 		Engine::Renderer::Draw(*m_Windows[it->second]);
 
 	//Engine::Renderer::EndScene();
+	
+	
+	// second pass
+	m_FrameBuffer->UnBind(); // back to default
+	glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	m_Shader[2]->Bind();
+	quadVAO->bind();
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, m_FrameBuffer->GetTextureAttachment());
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
 }
 
 float lastX;
@@ -362,5 +407,5 @@ void SandBoxLayer::OnEvent(Event& event)
 
 void SandBoxLayer::OnImGuiRender()
 {
-	ImGui::ColorEdit4("Clear Color", (float*)&m_ClearColor);
+	
 }

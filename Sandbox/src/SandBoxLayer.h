@@ -15,7 +15,8 @@ private:
 	std::unique_ptr<Camera> m_Camera;
 	std::vector<std::unique_ptr<Engine::Mesh>> m_Mesh;
 	std::vector<std::unique_ptr<Engine::Mesh>> m_Windows;
-	std::unique_ptr<Shader> m_Shader[2];
-	glm::vec4 m_ClearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+	std::unique_ptr<Shader> m_Shader[3];
+	std::unique_ptr<Engine::FrameBuffer> m_FrameBuffer;
+	glm::vec4 m_ClearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
 };
 

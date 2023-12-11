@@ -10,6 +10,8 @@
 #include "Engine/RenderCore/Shader.h"
 #include "Engine/RenderCore/Texture.h"
 #include "Engine/RenderCore/VertexArray.h"
+#include "Engine/RenderCore/VertexBufferLayout.h"
+#include "Engine/RenderCore/FrameBuffer.h"
 
 #include "Engine//Renderer/Renderer.h"
 
