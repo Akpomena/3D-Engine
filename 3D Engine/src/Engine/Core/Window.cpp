@@ -45,12 +45,17 @@ void Window::Update()
 	glfwSwapBuffers(m_Window);
 }
 
-void Window::enableCursor(bool enable)
+void Window::EnableCursor(bool enable)
 {
 	if (enable)
 		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	else
 		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Window::SetViewPort(int width, int height)
+{
+	glViewport(0, 0, width, height);
 }
 
 

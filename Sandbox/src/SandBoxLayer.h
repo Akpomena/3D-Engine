@@ -17,6 +17,13 @@ private:
 	std::vector<std::unique_ptr<Engine::Mesh>> m_Windows;
 	std::unique_ptr<Shader> m_Shader[3];
 	std::unique_ptr<Engine::FrameBuffer> m_FrameBuffer;
+	std::unique_ptr<Engine::FrameBuffer> m_EffectFrameBuffer;
 	glm::vec4 m_ClearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
+	bool m_EffectEnabled = false;
+	int m_CurrentEffect = 0;
+
+	int m_Image_Width;
+	int m_Image_Height;
+
 };
 

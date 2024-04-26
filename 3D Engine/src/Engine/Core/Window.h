@@ -28,7 +28,8 @@ public:
 	void SetEventCallback(const std::function<void(Event&)>& eventFunc) { m_EventFunction = eventFunc; }
 	GLFWwindow* GetWindow() { return m_Window; }
 	void Update();
-	void enableCursor(bool enable);
+	void EnableCursor(bool enable);
+	void SetViewPort(int width, int height);
 
 	unsigned int GetWidth() { return m_Props.Width; }
 	unsigned int GetHeight() { return m_Props.Height; }
