@@ -1,5 +1,9 @@
 #include "./Model.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 
 Engine::Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
 {

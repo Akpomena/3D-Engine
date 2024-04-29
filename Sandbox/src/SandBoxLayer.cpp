@@ -5,6 +5,7 @@
 #include <iostream>
 
 std::unique_ptr<VertexArray> quadVAO;
+std::unique_ptr<VertexArray> skyboxVAO;
 
 void SandBoxLayer::OnAttach()
 {
@@ -12,6 +13,51 @@ void SandBoxLayer::OnAttach()
 
 	m_Image_Width = Engine::Application::Get().GetWindow().GetWidth();
 	m_Image_Height = Engine::Application::Get().GetWindow().GetHeight();
+
+	float skyboxVertices[] = {
+		// positions          
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f
+	};
 
 	glm::vec3 positions[] = {
 		// Back Face      
@@ -265,9 +311,10 @@ void SandBoxLayer::OnAttach()
 		i++;
 	}
 
-	m_Shader[0] = std::make_unique<Shader>("assets/shaders/BasicVertexShader.vert", "assets/shaders/BasicFragShader.frag");
-	m_Shader[1] = std::make_unique<Shader>("assets/shaders/BasicVertexShader.vert", "assets/shaders/SolidColor.frag");
-	m_Shader[2] = std::make_unique<Shader>("assets/shaders/ScreenShader.vert", "assets/shaders/ScreenShader.frag");
+	m_Shader[0] = std::make_unique<Shader>("assets/shaders/ReflectionShader.vert", "assets/shaders/ReflectionShader.frag");
+	m_Shader[1] = std::make_unique<Shader>("assets/shaders/LightingShader.vert", "assets/shaders/LightingShader.frag");
+	m_Shader[2] = std::make_unique<Shader>("assets/shaders/EffectsShader.vert", "assets/shaders/EffectsShader.frag");
+	m_Shader[3] = std::make_unique<Shader>("assets/shaders/SkyboxShader.vert", "assets/shaders/SkyboxShader.frag");
 
 
 	float verts[] = {
@@ -293,6 +340,19 @@ void SandBoxLayer::OnAttach()
 
 	m_FrameBuffer = std::make_unique<Engine::FrameBuffer>(Engine::FrameBufferProp(m_Image_Width, m_Image_Height, true));
 	m_EffectFrameBuffer = std::make_unique<Engine::FrameBuffer>(Engine::FrameBufferProp(m_Image_Width, m_Image_Height, false));
+
+	//SkyBox
+	skyboxVAO = std::make_unique<VertexArray>();
+	VertexBuffer skybuf(&skyboxVertices, sizeof(skyboxVertices));
+	VertexBufferLayout skyboxLayout;
+	skyboxLayout.push<float>(3);
+
+	skyboxVAO->AddBuffer(skybuf, skyboxLayout);
+	glBindVertexArray(0);
+
+	m_SkyBox = std::make_unique<Engine::CubeMap>("assets/skybox/mountain_day/");
+
+	m_Model = std::make_unique<Engine::Model>("assets/models/backpack/backpack.obj");
 }
 
 void SandBoxLayer::OnDetach()
@@ -321,21 +381,43 @@ void SandBoxLayer::OnUpdate(float ts)
 
 	Engine::Renderer::BeginScene(*m_Camera, *m_Shader[0]);
 
-	std::map<float, int> sorted;
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_SkyBox->GetCubeMapID());
 
-	for (int i = 0; i < m_Windows.size(); i++)
+	m_Shader[0]->SetUniformVec3("cameraPos", m_Camera->Position);
+
+	m_Model->Draw(*m_Shader[0]);
+
+//	std::map<float, int> sorted;
+
+	/*for (int i = 0; i < m_Windows.size(); i++)
 	{
 		float distance = glm::length(m_Camera->Position - m_Windows[i]->GetPosition());
 		sorted[distance] = i;
-	}
+	}*/
 
-	for(auto& mesh: m_Mesh)
-		Engine::Renderer::Draw(*mesh);
+	/*for(auto& mesh: m_Mesh)
+		Engine::Renderer::Draw(*mesh);*/
 
-	for (std::map<float, int>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); it++)
-		Engine::Renderer::Draw(*m_Windows[it->second]);
+	/*for (std::map<float, int>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); it++)
+		Engine::Renderer::Draw(*m_Windows[it->second]);*/
 
 	//Engine::Renderer::EndScene();
+
+	//Skybox
+
+	glDepthFunc(GL_LEQUAL);
+	m_Shader[3]->Bind();
+
+	glm::mat4 view = glm::mat4(glm::mat3(m_Camera->GetViewMatrix())); // remove translation from the view matrix
+	m_Shader[3]->SetUniformMat4("view", view);
+	m_Shader[3]->SetUniformMat4("projection", m_Camera->GetProjMatrix());
+
+	skyboxVAO->bind();
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_SkyBox->GetCubeMapID());
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glDepthFunc(GL_LESS);
+
+	
 	
 	
 	// second pass
@@ -525,6 +607,7 @@ void SandBoxLayer::OnImGuiRender()
 			Engine::Application::Get().GetWindow().SetViewPort(view.x, view.y);
 			m_FrameBuffer->UpdateBufferSize(view.x, view.y);
 			m_EffectFrameBuffer->UpdateBufferSize(view.x, view.y);
+			m_Camera->UpdateDimensions(view.x, view.y);
 		}
 	}
 

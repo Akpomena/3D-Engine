@@ -66,8 +66,15 @@ public:
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset);
 
+    void UpdateDimensions(int width, int height) {
+        m_Width = width;
+        m_Height = height;
+    }
+
 private:
     Window* m_Window;
+    unsigned int m_Width;
+    unsigned int m_Height; // TODO(Fix the situation here)
 private:
     // calculates the front vector from the Camera's (updated) Euler Angles
     void updateCameraVectors();

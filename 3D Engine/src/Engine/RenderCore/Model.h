@@ -1,14 +1,5 @@
 #pragma once
 
-#include <glad/glad.h> 
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <stb_image.h>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
 #include "./Mesh.h"
 #include "./Shader.h"
 
@@ -19,6 +10,11 @@
 #include <map>
 #include <vector>
 
+extern struct aiNode;
+extern struct aiScene;
+extern struct aiMesh;
+extern struct aiMaterial;
+extern enum aiTextureType;
 
 namespace Engine {
 

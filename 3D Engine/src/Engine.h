@@ -12,6 +12,8 @@
 #include "Engine/RenderCore/VertexArray.h"
 #include "Engine/RenderCore/VertexBufferLayout.h"
 #include "Engine/RenderCore/FrameBuffer.h"
+#include "Engine/RenderCore/CubeMap.h"
+#include "Engine/RenderCore/Model.h"
 
 #include "Engine//Renderer/Renderer.h"
 
