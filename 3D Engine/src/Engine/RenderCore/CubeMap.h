@@ -12,6 +12,7 @@ namespace Engine
 	public:
 		CubeMap(std::string path);
 		void Draw();
+		void Bind();
 		const unsigned int& GetCubeMapID() const { return m_CubeMapID; }
 	private:
 		unsigned int m_CubeMapID = 0;

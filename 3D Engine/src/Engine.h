@@ -4,6 +4,9 @@
 
 #include "Engine/core/Application.h"
 #include "Engine/core/Layer.h"
+#include "Engine/Core/KeyCodes.h"
+#include "Engine/Core/Input.h"
+
 #include "Engine/ImGui/ImGuiLayer.h"
 		  
 #include "Engine/RenderCore/Camera.h"
@@ -21,5 +24,5 @@
 #include "Engine/Events/KeyEvent.h"
 #include "Engine/Events/MouseEvent.h"
 
-#include "Engine/Core/KeyCodes.h"
-#include "Engine/Core/Input.h"
+#include "Engine/Scene/Scene.h"
+#include "Engine/Scene/Component.h"

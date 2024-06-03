@@ -352,7 +352,11 @@ void SandBoxLayer::OnAttach()
 
 	m_SkyBox = std::make_unique<Engine::CubeMap>("assets/skybox/mountain_day/");
 
-	m_Model = std::make_unique<Engine::Model>("assets/models/backpack/backpack.obj");
+	m_Model = std::make_unique<Engine::Model>("assets/models/cube/cube.obj");
+
+	Engine::MeshComponent* me = new Engine::MeshComponent("assets/models/cube/cube.obj");
+	m_Scene.CreateEntity()->AddComponent<Engine::MeshComponent>(me);
+
 }
 
 void SandBoxLayer::OnDetach()
@@ -377,19 +381,18 @@ void SandBoxLayer::OnUpdate(float ts)
 	m_FrameBuffer->Bind();
 
 	Engine::Renderer::SetClearColor(m_ClearColor);
-	Engine::Renderer::Clear();
 
-	Engine::Renderer::BeginScene(*m_Camera, *m_Shader[0]);
+	Engine::Renderer::BeginScene(*m_Camera, *m_Shader[1]);
 
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_SkyBox->GetCubeMapID());
+	/*glBindTexture(GL_TEXTURE_CUBE_MAP, m_SkyBox->GetCubeMapID());*/
 
-	m_Shader[0]->SetUniformVec3("cameraPos", m_Camera->Position);
+	/*m_Shader[0]->SetUniformVec3("cameraPos", m_Camera->Position);*/
 
-	m_Model->Draw(*m_Shader[0]);
+	/*m_Model->Draw(*m_Shader[1]);*/
+	m_Scene.DrawScene();
+	/*std::map<float, int> sorted;
 
-//	std::map<float, int> sorted;
-
-	/*for (int i = 0; i < m_Windows.size(); i++)
+	for (int i = 0; i < m_Windows.size(); i++)
 	{
 		float distance = glm::length(m_Camera->Position - m_Windows[i]->GetPosition());
 		sorted[distance] = i;
@@ -401,7 +404,7 @@ void SandBoxLayer::OnUpdate(float ts)
 	/*for (std::map<float, int>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); it++)
 		Engine::Renderer::Draw(*m_Windows[it->second]);*/
 
-	//Engine::Renderer::EndScene();
+	/*Engine::Renderer::EndScene();*/
 
 	//Skybox
 
@@ -417,8 +420,6 @@ void SandBoxLayer::OnUpdate(float ts)
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glDepthFunc(GL_LESS);
 
-	
-	
 	
 	// second pass
 	m_FrameBuffer->UnBind(); // back to default

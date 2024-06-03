@@ -40,3 +40,8 @@ void Engine::CubeMap::Draw()
 {
     
 }
+
+void Engine::CubeMap::Bind()
+{
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubeMapID);
+}

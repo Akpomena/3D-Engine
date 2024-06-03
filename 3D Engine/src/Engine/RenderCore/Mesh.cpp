@@ -50,14 +50,6 @@ void Engine::Mesh::Draw(Shader& shader)
         textures[i].Bind();
     }
 
-    // Setting Transform
-    glm::mat4 transform = glm::mat4(1.0f);
-    transform = glm::translate(transform, m_Position);
-   // transform = glm::rotate()
-    transform = glm::scale(transform, m_Scale);
-
-    shader.SetUniformMat4("u_Model", transform);
-
     // draw mesh
     m_VertexArray->bind();
     //glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, 0);
@@ -70,9 +62,9 @@ void Engine::Mesh::Draw(Shader& shader)
 
 void Engine::Mesh::setupMesh()
 {
-    m_VertexArray = std::make_unique<VertexArray>();
+    m_VertexArray = std::make_shared<VertexArray>();
 
-    m_VertexBuffer = std::make_unique<VertexBuffer>(&vertices[0], vertices.size() * sizeof(Vertex));
+    m_VertexBuffer = std::make_shared<VertexBuffer>(&vertices[0], vertices.size() * sizeof(Vertex));
     VertexBufferLayout layout;
     layout.push<float>(3);
     layout.push<float>(3);

@@ -69,9 +69,9 @@ namespace Engine {
 
         // render data 
 
-        std::unique_ptr<VertexBuffer> m_VertexBuffer;
-        std::unique_ptr<IndexBuffer> m_IndexBuffer;
-        std::unique_ptr<VertexArray> m_VertexArray;
+        std::shared_ptr<VertexBuffer> m_VertexBuffer;
+        std::shared_ptr<IndexBuffer> m_IndexBuffer;
+        std::shared_ptr<VertexArray> m_VertexArray;
 
     private:
         // initializes all the buffer objects/arrays

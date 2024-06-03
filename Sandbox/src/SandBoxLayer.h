@@ -27,5 +27,7 @@ private:
 	int m_Image_Width;
 	int m_Image_Height;
 
+	Engine::Scene m_Scene;
+
 };
 

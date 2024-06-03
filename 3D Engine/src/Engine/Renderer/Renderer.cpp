@@ -27,6 +27,8 @@ void Engine::Renderer::Init()
 
 void Engine::Renderer::BeginScene(Camera& camera, Shader& shader)
 {
+	Clear();
+
 	m_Shader = &shader;
 	m_Shader->Bind();
 
@@ -36,11 +38,12 @@ void Engine::Renderer::BeginScene(Camera& camera, Shader& shader)
 
 void Engine::Renderer::EndScene()
 {
-	Clear();
+	
 }
 
-void Engine::Renderer::Draw(Mesh& mesh)
+void Engine::Renderer::Draw(Mesh& mesh, glm::mat4 transform)
 {
+	m_Shader->SetUniformMat4("u_Model", transform);
 	mesh.Draw(*m_Shader);
 }
 

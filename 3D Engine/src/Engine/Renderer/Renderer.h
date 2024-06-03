@@ -14,7 +14,7 @@ namespace Engine {
 		static void Init();
 		static void BeginScene(Camera& camera, Shader& shader);
 		static void EndScene();
-		static void Draw(Mesh& mesh);
+		static void Draw(Mesh& mesh, glm::mat4 transform);
 		static void SetClearColor(glm::vec4 color);
 	
 	public:
