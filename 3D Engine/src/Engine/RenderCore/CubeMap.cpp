@@ -3,7 +3,10 @@
 #include <stb_image.h>
 #include <iostream>
 
-Engine::CubeMap::CubeMap(std::string path)
+#include "VertexBufferLayout.h"
+#include "./Camera.h"
+
+Engine::SkyBox::SkyBox(std::string path): m_SkyboxShader("assets/shaders/SkyboxShader.vert", "assets/shaders/SkyboxShader.frag")
 {
 
     glGenTextures(1, &m_CubeMapID);
@@ -34,14 +37,80 @@ Engine::CubeMap::CubeMap(std::string path)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
+    //SkyBox
+
+    float skyboxVertices[] = {
+        // positions          
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+    };
+
+    VertexBuffer skybuf(&skyboxVertices, sizeof(skyboxVertices));
+    VertexBufferLayout skyboxLayout;
+    skyboxLayout.push<float>(3);
+
+    m_SkyboxVAO.AddBuffer(skybuf, skyboxLayout);
+    glBindVertexArray(0);
+
 }
 
-void Engine::CubeMap::Draw()
+void Engine::SkyBox::Draw(Camera& camera)
 {
-    
+    //Skybox
+
+    glDepthFunc(GL_LEQUAL);
+    m_SkyboxShader.Bind();
+
+    glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
+    m_SkyboxShader.SetUniformMat4("view", view);
+    m_SkyboxShader.SetUniformMat4("projection", camera.GetProjMatrix());
+
+    m_SkyboxVAO.bind();
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubeMapID);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDepthFunc(GL_LESS);
 }
 
-void Engine::CubeMap::Bind()
+void Engine::SkyBox::Bind()
 {
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubeMapID);
 }

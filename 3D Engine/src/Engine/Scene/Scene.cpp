@@ -6,7 +6,7 @@
 
 #include "../Renderer/Renderer.h"
 
-Engine::Scene::Scene(std::string& sceneName) : m_SceneName(sceneName)
+Engine::Scene::Scene(const char* sceneName, const char* skybox) : m_SceneName(sceneName), m_Skybox(skybox)
 {
 }
 
@@ -30,7 +30,7 @@ Engine::Entity* Engine::Scene::CreateEntity(std::string const& entityName)
 {
 	Entity* entity = new Entity(entityName);
 	/*m_Entities.push_back(Entity(entityName));*/
-	entity->AddComponent<TransformComponent>(new TransformComponent());
+	entity->AddComponent<TransformComponent>(new TransformComponent(entity));
 
 	m_Entities.push_back(entity);
 

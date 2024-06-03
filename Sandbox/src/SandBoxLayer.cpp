@@ -14,206 +14,6 @@ void SandBoxLayer::OnAttach()
 	m_Image_Width = Engine::Application::Get().GetWindow().GetWidth();
 	m_Image_Height = Engine::Application::Get().GetWindow().GetHeight();
 
-	float skyboxVertices[] = {
-		// positions          
-		-1.0f,  1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-
-		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-
-		-1.0f, -1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-
-		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f, -1.0f,
-
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f
-	};
-
-	glm::vec3 positions[] = {
-		// Back Face      
-		{ 0.5f, -0.5f, -0.5f},
-		{-0.5f, -0.5f, -0.5f},
-		{ 0.5f,  0.5f, -0.5f},
-		{-0.5f,  0.5f, -0.5f},
-		{ 0.5f,  0.5f, -0.5f},
-		{-0.5f, -0.5f, -0.5f},
-				
-		// Front Face
-		{-0.5f, -0.5f,  0.5f},
-		{ 0.5f, -0.5f,  0.5f},
-		{ 0.5f,  0.5f,  0.5f},
-		{ 0.5f,  0.5f,  0.5f},
-		{-0.5f,  0.5f,  0.5f},
-		{-0.5f, -0.5f,  0.5f},
-							
-		// Left Face
-		{-0.5f,  0.5f,  0.5f},
-		{-0.5f,  0.5f, -0.5f},
-		{-0.5f, -0.5f, -0.5f},
-		{-0.5f, -0.5f, -0.5f},
-		{-0.5f, -0.5f,  0.5f},
-		{-0.5f,  0.5f,  0.5f},
-				
-		// Right Face
-		{ 0.5f,  0.5f,  0.5f},
-		{ 0.5f, -0.5f, -0.5f},
-		{ 0.5f,  0.5f, -0.5f},
-		{ 0.5f, -0.5f, -0.5f},
-		{ 0.5f,  0.5f,  0.5f},
-		{ 0.5f, -0.5f,  0.5f},
-							 
-		{-0.5f, -0.5f, -0.5f},
-		{ 0.5f, -0.5f, -0.5f},
-		{ 0.5f, -0.5f,  0.5f},
-		{ 0.5f, -0.5f,  0.5f},
-		{-0.5f, -0.5f,  0.5f},
-		{-0.5f, -0.5f, -0.5f},
-							 
-		// Top Face
-		{-0.5f,  0.5f, -0.5f},
-		{ 0.5f,  0.5f,  0.5f},
-		{ 0.5f,  0.5f, -0.5f},
-		{-0.5f,  0.5f,  0.5f},
-		{ 0.5f,  0.5f,  0.5f},
-		{-0.5f,  0.5f, -0.5f}
-	};
-
-	glm::vec2 textures[] = {
-		// positions        
-		{0.0f, 0.0f},
-		{1.0f, 0.0f},
-		{1.0f, 1.0f},
-		{1.0f, 1.0f},
-		{0.0f, 1.0f},
-		{0.0f, 0.0f},
-
-		{0.0f, 0.0f},
-		{1.0f, 0.0f},
-		{1.0f, 1.0f},
-		{1.0f, 1.0f},
-		{0.0f, 1.0f},
-		{0.0f, 0.0f},
-
-		{1.0f, 0.0f},
-		{1.0f, 1.0f},
-		{0.0f, 1.0f},
-		{0.0f, 1.0f},
-		{0.0f, 0.0f},
-		{1.0f, 0.0f},
-
-		{ 1.0f, 0.0f},
-		{ 1.0f, 1.0f},
-		{ 0.0f, 1.0f},
-		{ 0.0f, 1.0f},
-		{ 0.0f, 0.0f},
-		{ 1.0f, 0.0f},
-
-		{0.0f, 1.0f},
-		{1.0f, 1.0f},
-		{1.0f, 0.0f},
-		{1.0f, 0.0f},
-		{0.0f, 0.0f},
-		{0.0f, 1.0f},
-
-		{0.0f, 1.0f},
-		{1.0f, 1.0f},
-		{1.0f, 0.0f},
-		{1.0f, 0.0f},
-		{0.0f, 0.0f},
-		{0.0f, 1.0f}
-	};
-
-	float vertices[] = {
-		  // normals           // texture coords
-		  0.0f,  0.0f, -1.0f,  
-		  0.0f,  0.0f, -1.0f,  
-		  0.0f,  0.0f, -1.0f,  
-		  0.0f,  0.0f, -1.0f,  
-		  0.0f,  0.0f, -1.0f,  
-		  0.0f,  0.0f, -1.0f,  
-
-		  0.0f,  0.0f, 1.0f,   
-		  0.0f,  0.0f, 1.0f,   
-		  0.0f,  0.0f, 1.0f,   
-		  0.0f,  0.0f, 1.0f,   
-		  0.0f,  0.0f, 1.0f,   
-		  0.0f,  0.0f, 1.0f,   
-
-		 -1.0f,  0.0f,  0.0f,  
-		 -1.0f,  0.0f,  0.0f,  
-		 -1.0f,  0.0f,  0.0f,  
-		 -1.0f,  0.0f,  0.0f,  
-		 -1.0f,  0.0f,  0.0f,  
-		 -1.0f,  0.0f,  0.0f,  
-
-		  1.0f,  0.0f,  0.0f,  
-		  1.0f,  0.0f,  0.0f,  
-		  1.0f,  0.0f,  0.0f,  
-		  1.0f,  0.0f,  0.0f,  
-		  1.0f,  0.0f,  0.0f,  
-		  1.0f,  0.0f,  0.0f,  
-
-		  0.0f, -1.0f,  0.0f,  
-		  0.0f, -1.0f,  0.0f,  
-		  0.0f, -1.0f,  0.0f,  
-		  0.0f, -1.0f,  0.0f,  
-		  0.0f, -1.0f,  0.0f,  
-		  0.0f, -1.0f,  0.0f,  
-
-		  0.0f,  1.0f,  0.0f,  
-		  0.0f,  1.0f,  0.0f,  
-		  0.0f,  1.0f,  0.0f,  
-		  0.0f,  1.0f,  0.0f,  
-		  0.0f,  1.0f,  0.0f,  
-		  0.0f,  1.0f,  0.0f,  
-	};
-
-	std::vector<Engine::Vertex> Vertices;
-
-	for (int i = 0; i < 36; i++)
-	{
-		Engine::Vertex v;
-		v.Position = positions[i];
-		v.TexCoords = textures[i];
-		Vertices.push_back(v);
-	}
-
-	Texture boxTex("assets/textures/box.png", 0, "texture_diffuse");
-	std::vector<Texture> tex;
-	tex.push_back(boxTex);
-
-	m_Mesh.push_back(std::make_unique<Engine::Mesh>(Vertices, tex));
-	m_Mesh.push_back(std::make_unique<Engine::Mesh>(Vertices, tex));
 
 	glm::vec3 planePositions[] = {
 		// positions         
@@ -227,17 +27,6 @@ void SandBoxLayer::OnAttach()
 		{-5.0f, -0.5f, -5.0f}
 	};
 
-	glm::vec2 planeTextures[] = {
-		// texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
-		{1.0f, 0.0f},
-		{0.0f, 0.0f},
-		{0.0f, 1.0f},
-	
-		{1.0f, 0.0f},
-		{0.0f, 1.0f},
-		{1.0f, 1.0f}
-	};
-
 	glm::vec3 vegPositions[] = {
 		// positions         
 		{ 0.0f,  0.5f, 0.0f},
@@ -249,50 +38,14 @@ void SandBoxLayer::OnAttach()
 		{ 1.0f,  0.5f, 0.0f}
 	};
 
-	glm::vec2 vegTextures[] = {
-		// texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
-		{0.0f, 1.0f},
-		{0.0f, 0.0f},
-		{1.0f, 0.0f},
 
-		{0.0f, 1.0f},
-		{1.0f, 0.0f},
-		{1.0f, 1.0f}
-	};
+	std::vector<Engine::Vertex> Vertices;
+	std::vector<Texture> tex;
 
-	Vertices.clear();
 
-	for (int i = 0; i < 6; i++)
-	{
-		Engine::Vertex v;
-		v.Position = planePositions[i];
-		v.TexCoords = planeTextures[i];
-		Vertices.push_back(v);
-	}
+	//m_Mesh[0]->SetPosition({ -1.0f, 0.0f, -1.0f });
+	//m_Mesh[1]->SetPosition({ 2.0f, 0.0f, 0.0f });
 
-	Texture floorTex("assets/textures/marble.png", 0, "texture_diffuse");
-	tex.clear();
-	tex.push_back(floorTex);
-
-	m_Mesh.push_back(std::make_unique<Engine::Mesh>(Vertices, tex));
-
-	m_Mesh[0]->SetPosition({ -1.0f, 0.0f, -1.0f });
-	m_Mesh[1]->SetPosition({ 2.0f, 0.0f, 0.0f });
-
-	// Grasses
-	Vertices.clear();
-
-	for (int i = 0; i < 6; i++)
-	{
-		Engine::Vertex v;
-		v.Position = vegPositions[i];
-		v.TexCoords = vegTextures[i];
-		Vertices.push_back(v);
-	}
-
-	Texture grassTex("assets/textures/window.png", 0, "texture_diffuse");
-	tex.clear();
-	tex.push_back(grassTex);
 
 	std::vector<glm::vec3> vegetation;
 	vegetation.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
@@ -301,20 +54,10 @@ void SandBoxLayer::OnAttach()
 	vegetation.push_back(glm::vec3(-0.3f, 0.0f, -2.3f));
 	vegetation.push_back(glm::vec3(0.5f, 0.0f, -0.6f));
 
-	int i = 0;
-
-	for (auto& loc : vegetation)
-	{
-		m_Windows.push_back(std::make_unique<Engine::Mesh>(Vertices, tex));
-		m_Windows[i]->SetPosition(loc);
-
-		i++;
-	}
 
 	m_Shader[0] = std::make_unique<Shader>("assets/shaders/ReflectionShader.vert", "assets/shaders/ReflectionShader.frag");
 	m_Shader[1] = std::make_unique<Shader>("assets/shaders/LightingShader.vert", "assets/shaders/LightingShader.frag");
 	m_Shader[2] = std::make_unique<Shader>("assets/shaders/EffectsShader.vert", "assets/shaders/EffectsShader.frag");
-	m_Shader[3] = std::make_unique<Shader>("assets/shaders/SkyboxShader.vert", "assets/shaders/SkyboxShader.frag");
 
 
 	float verts[] = {
@@ -340,19 +83,6 @@ void SandBoxLayer::OnAttach()
 
 	m_FrameBuffer = std::make_unique<Engine::FrameBuffer>(Engine::FrameBufferProp(m_Image_Width, m_Image_Height, true));
 	m_EffectFrameBuffer = std::make_unique<Engine::FrameBuffer>(Engine::FrameBufferProp(m_Image_Width, m_Image_Height, false));
-
-	//SkyBox
-	skyboxVAO = std::make_unique<VertexArray>();
-	VertexBuffer skybuf(&skyboxVertices, sizeof(skyboxVertices));
-	VertexBufferLayout skyboxLayout;
-	skyboxLayout.push<float>(3);
-
-	skyboxVAO->AddBuffer(skybuf, skyboxLayout);
-	glBindVertexArray(0);
-
-	m_SkyBox = std::make_unique<Engine::CubeMap>("assets/skybox/mountain_day/");
-
-	m_Model = std::make_unique<Engine::Model>("assets/models/cube/cube.obj");
 
 	Engine::MeshComponent* me = new Engine::MeshComponent("assets/models/cube/cube.obj");
 	m_Scene.CreateEntity()->AddComponent<Engine::MeshComponent>(me);
@@ -384,12 +114,8 @@ void SandBoxLayer::OnUpdate(float ts)
 
 	Engine::Renderer::BeginScene(*m_Camera, *m_Shader[1]);
 
-	/*glBindTexture(GL_TEXTURE_CUBE_MAP, m_SkyBox->GetCubeMapID());*/
-
-	/*m_Shader[0]->SetUniformVec3("cameraPos", m_Camera->Position);*/
-
-	/*m_Model->Draw(*m_Shader[1]);*/
 	m_Scene.DrawScene();
+	m_Scene.DrawSkyBox(*m_Camera);
 	/*std::map<float, int> sorted;
 
 	for (int i = 0; i < m_Windows.size(); i++)
@@ -405,20 +131,6 @@ void SandBoxLayer::OnUpdate(float ts)
 		Engine::Renderer::Draw(*m_Windows[it->second]);*/
 
 	/*Engine::Renderer::EndScene();*/
-
-	//Skybox
-
-	glDepthFunc(GL_LEQUAL);
-	m_Shader[3]->Bind();
-
-	glm::mat4 view = glm::mat4(glm::mat3(m_Camera->GetViewMatrix())); // remove translation from the view matrix
-	m_Shader[3]->SetUniformMat4("view", view);
-	m_Shader[3]->SetUniformMat4("projection", m_Camera->GetProjMatrix());
-
-	skyboxVAO->bind();
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_SkyBox->GetCubeMapID());
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glDepthFunc(GL_LESS);
 
 	
 	// second pass

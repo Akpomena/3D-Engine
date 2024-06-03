@@ -6,6 +6,7 @@
 class SandBoxLayer: public Engine::Layer
 {
 public:
+	SandBoxLayer() : m_Scene("Test Scene", "assets/skybox/mountain_day/") {}
 	virtual void OnAttach() override;
 	virtual void OnDetach() override;
 	virtual void OnUpdate(float ts) override;
@@ -18,7 +19,6 @@ private:
 	std::unique_ptr<Shader> m_Shader[4];
 	std::unique_ptr<Engine::FrameBuffer> m_FrameBuffer;
 	std::unique_ptr<Engine::FrameBuffer> m_EffectFrameBuffer;
-	std::unique_ptr<Engine::CubeMap> m_SkyBox;
 	std::unique_ptr<Engine::Model> m_Model;
 	glm::vec4 m_ClearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
 	bool m_EffectEnabled = false;

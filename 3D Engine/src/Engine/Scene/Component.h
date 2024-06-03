@@ -5,11 +5,15 @@
 namespace Engine
 {
 
+	class Entity;
+
 	class Component
 	{
 	public:
-		Component() = default;
+		Component(Entity* entity): m_ParentEntity(entity) {}
 
+
+		const Entity* GetParentEntity() const { return m_ParentEntity; }
 	protected:
 		template <typename T>
 		inline static size_t GetGeneratedComponentID()
@@ -29,7 +33,7 @@ namespace Engine
 		}
 		
 	private:
-
+		Entity* m_ParentEntity;
 	};
 
 	class TagComponent : public Component
@@ -47,6 +51,8 @@ namespace Engine
 	{
 	public:
 		TransformComponent() = default;
+
+		TransformComponent(Entity* entity) : Component(entity) {}
 
 		glm::mat4 GetTransform()
 		{
@@ -72,11 +78,7 @@ namespace Engine
 	class MeshComponent : public Component
 	{
 	public:
-		MeshComponent(std::string const& path) : m_Model(path)
-		{
-		}
-
-		MeshComponent(const char* path) : m_Model(path)
+		MeshComponent(std::string const& path, Entity* entity) : m_Model(path), Component(entity)
 		{
 		}
 
