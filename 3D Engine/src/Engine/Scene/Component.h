@@ -10,10 +10,9 @@ namespace Engine
 	class Component
 	{
 	public:
-		Component(Entity* entity): m_ParentEntity(entity) {}
+		Component(Entity* entity) : m_ParentEntity(entity) {}
 
-
-		const Entity* GetParentEntity() const { return m_ParentEntity; }
+		Entity* GetParentEntity() const { return m_ParentEntity; }
 	protected:
 		template <typename T>
 		inline static size_t GetGeneratedComponentID()
@@ -39,8 +38,9 @@ namespace Engine
 	class TagComponent : public Component
 	{
 	public:
-		TagComponent() = default;
+		TagComponent(const std::string& tagName, Entity* entity): m_Tagname(tagName), Component(entity) {};
 
+		std::string& GetTagName() { return m_Tagname; }
 	public:
 		static size_t GetComponenetID() { return GetGeneratedComponentID<TagComponent>(); }
 	private:

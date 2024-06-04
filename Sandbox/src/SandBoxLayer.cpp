@@ -1,6 +1,7 @@
 #include "SandBoxLayer.h"
 
 #include <imgui.h>
+
 #include <glad/glad.h>
 #include <iostream>
 
@@ -84,8 +85,10 @@ void SandBoxLayer::OnAttach()
 	m_FrameBuffer = std::make_unique<Engine::FrameBuffer>(Engine::FrameBufferProp(m_Image_Width, m_Image_Height, true));
 	m_EffectFrameBuffer = std::make_unique<Engine::FrameBuffer>(Engine::FrameBufferProp(m_Image_Width, m_Image_Height, false));
 
-	Engine::MeshComponent* me = new Engine::MeshComponent("assets/models/cube/cube.obj");
-	m_Scene.CreateEntity()->AddComponent<Engine::MeshComponent>(me);
+	m_Scene.CreateEntity("Cube");
+	Engine::Entity& en = m_Scene.GetEntity("Cube");
+	Engine::MeshComponent* me = new Engine::MeshComponent("assets/models/cube/cube.obj", &en);
+	en.AddComponent<Engine::MeshComponent>(me);
 
 }
 
@@ -115,7 +118,8 @@ void SandBoxLayer::OnUpdate(float ts)
 	Engine::Renderer::BeginScene(*m_Camera, *m_Shader[1]);
 
 	m_Scene.DrawScene();
-	m_Scene.DrawSkyBox(*m_Camera);
+	//m_Scene.DrawSkyBox(*m_Camera);
+
 	/*std::map<float, int> sorted;
 
 	for (int i = 0; i < m_Windows.size(); i++)
@@ -155,7 +159,7 @@ void SandBoxLayer::OnUpdate(float ts)
 float lastX;
 float lastY;
 bool firstMouse = true;
-bool mouseMove = true;
+bool mouseMove = false;
 
 
 void SandBoxLayer::OnEvent(Event& event)
@@ -208,7 +212,10 @@ void SandBoxLayer::OnEvent(Event& event)
 		});
 }
 
+bool showScenePanel = true;
+bool showSideBar = true;
 
+Engine::Entity* SelectedEntity = nullptr;
 
 void SandBoxLayer::OnImGuiRender()
 {
@@ -271,7 +278,7 @@ void SandBoxLayer::OnImGuiRender()
 
 	if (ImGui::BeginMenuBar())
 	{
-		if (ImGui::BeginMenu("Options"))
+		if (ImGui::BeginMenu("File"))
 		{
 			// Disabling fullscreen would allow the window to be moved to the front of other windows,
 			// which we can't undo at the moment without finer window depth/z control.
@@ -279,32 +286,84 @@ void SandBoxLayer::OnImGuiRender()
 			ImGui::MenuItem("Padding", NULL, &opt_padding);
 			ImGui::Separator();
 
-			if (ImGui::MenuItem("Flag: NoSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoSplit; }
-			if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
-			if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
-			if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
-			if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
-			ImGui::Separator();
-
 			if (ImGui::MenuItem("Close", NULL, false, p_open != NULL))
 				p_open = false;
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("View"))
+		{
+			if (ImGui::MenuItem("Scene Heirachy"))
+				showScenePanel = true;
+
+			if (ImGui::MenuItem("Side Bar"))
+				showSideBar = true;
+
 			ImGui::EndMenu();
 		}
 
 		ImGui::EndMenuBar();
 	}
 
-	ImGui::Begin("Side Bar");
-	ImGui::ColorEdit4("Clear Color", (float*)&m_ClearColor);
-	ImGui::Checkbox("Enable Effect", &m_EffectEnabled);
-
-	if (m_EffectEnabled)
+	if (showSideBar)
 	{
-		const char* items[] = { "Inversion", "GrayScale", "Sharpen", "Blur", "Edge Detection" };
-		ImGui::Combo("combo", &m_CurrentEffect, items, IM_ARRAYSIZE(items));
+		ImGui::Begin("Side Bar", &showSideBar);
+		ImGui::ColorEdit4("Clear Color", (float*)&m_ClearColor);
+		ImGui::Checkbox("Enable Effect", &m_EffectEnabled);
+
+		if (m_EffectEnabled)
+		{
+			const char* items[] = { "Inversion", "GrayScale", "Sharpen", "Blur", "Edge Detection" };
+			ImGui::Combo("combo", &m_CurrentEffect, items, IM_ARRAYSIZE(items));
+		}
+
+		ImGui::End();
 	}
 
-	ImGui::End();
+
+	if (showScenePanel)
+	{
+		ImGui::Begin("Scene", &showScenePanel);
+
+		for (auto tag : m_Scene.GetComponents<Engine::TagComponent>())
+		{
+			if(ImGui::Button(tag->GetTagName().c_str())) {
+				SelectedEntity = tag->GetParentEntity();
+			}
+		}
+		
+		if (ImGui::BeginPopupContextWindow(0, 1))
+		{
+			static char str0[128] = "";
+			ImGui::InputText("Enter Entity Name", str0, IM_ARRAYSIZE(str0));
+			
+			if (ImGui::Button("Create Entity") && str0[0] != 0)
+			{
+				m_Scene.CreateEntity(str0);
+				ImGui::CloseCurrentPopup();
+				char str0[128] = "";
+			}
+
+			ImGui::EndPopup();
+		}
+
+		ImGui::Begin("Properties");
+
+		if (SelectedEntity)
+		{
+			Engine::TagComponent* tag = (Engine::TagComponent*)SelectedEntity->m_Components[Engine::TagComponent::GetComponenetID()];
+			
+			static char str1[128];
+			strncpy_s(str1, sizeof(str1), tag->GetTagName().c_str(), sizeof(str1));
+
+			ImGui::InputText("Enter Entity Name", str1, IM_ARRAYSIZE(str1));
+		}
+
+		ImGui::End();
+
+		ImGui::End();
+	}
+	
 
 	ImGui::Begin("OpenGL Texture Text");
 
@@ -330,6 +389,8 @@ void SandBoxLayer::OnImGuiRender()
 
 	ImGui::End();
 
+	ImGui::ShowDemoWindow((bool*)1);
 	ImGui::End();
+
 
 }

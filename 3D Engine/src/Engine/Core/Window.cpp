@@ -162,7 +162,7 @@ int Window::Init()
 	// Should be removed later
 	glfwMakeContextCurrent(m_Window);
 
-	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	return 0;
 }

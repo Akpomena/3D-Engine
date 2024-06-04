@@ -12,27 +12,48 @@ Engine::Scene::Scene(const char* sceneName, const char* skybox) : m_SceneName(sc
 
 void Engine::Scene::DrawScene()
 {
-	for (auto entity : m_Entities)
+	/*for (auto& [key, entity] : m_Entities)
 	{
-		MeshComponent* newModel = (MeshComponent*)entity->m_Components[MeshComponent::GetComponenetID()];
-
-		TransformComponent* newTransform = (TransformComponent*)entity->m_Components[TransformComponent::GetComponenetID()];
-
-
-		for (int i = 0; i < newModel->m_Model.GetMeshes().size(); i++)
+		if (entity.HasComponent[MeshComponent::GetComponenetID()])
 		{
-			Renderer::Draw(newModel->m_Model.GetMeshes()[i], newTransform->GetTransform());
+			MeshComponent* newModel = (MeshComponent*)entity.m_Components[MeshComponent::GetComponenetID()];
+
+			TransformComponent* newTransform = (TransformComponent*)entity.m_Components[TransformComponent::GetComponenetID()];
+
+
+			for (int i = 0; i < newModel->m_Model.GetMeshes().size(); i++)
+			{
+				Renderer::Draw(newModel->m_Model.GetMeshes()[i], newTransform->GetTransform());
+			}
+		}
+	}*/
+
+	for (auto mesh : GetComponents<MeshComponent>())
+	{
+		for (int i = 0; i < mesh->m_Model.GetMeshes().size(); i++)
+		{
+			TransformComponent* transform = (TransformComponent*)mesh->GetParentEntity()->m_Components[TransformComponent::GetComponenetID()];
+			Renderer::Draw(mesh->m_Model.GetMeshes()[i], transform->GetTransform());
 		}
 	}
 }
-
-Engine::Entity* Engine::Scene::CreateEntity(std::string const& entityName)
+Engine::Entity& Engine::Scene::GetEntity(const std::string& name)
 {
-	Entity* entity = new Entity(entityName);
-	/*m_Entities.push_back(Entity(entityName));*/
-	entity->AddComponent<TransformComponent>(new TransformComponent(entity));
+	if (m_Entities.find(name) == m_Entities.end())
+	{
+		assert(false, "Entity does already exist");
+	}
 
-	m_Entities.push_back(entity);
+	return m_Entities[name];
+}
 
-	return entity;
+void Engine::Scene::CreateEntity(std::string const& entityName)
+{
+
+	if (m_Entities.find(entityName) != m_Entities.end())
+	{
+		assert(false, "Entity already exists");
+	}
+
+	m_Entities[entityName] = Entity(entityName, this);
 }
