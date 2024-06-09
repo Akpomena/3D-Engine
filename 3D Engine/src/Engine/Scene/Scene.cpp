@@ -32,7 +32,7 @@ void Engine::Scene::DrawScene()
 	{
 		for (int i = 0; i < mesh->m_Model.GetMeshes().size(); i++)
 		{
-			TransformComponent* transform = (TransformComponent*)mesh->GetParentEntity()->m_Components[TransformComponent::GetComponenetID()];
+			TransformComponent* transform = mesh->GetParentEntity()->GetComponent<TransformComponent>();
 			Renderer::Draw(mesh->m_Model.GetMeshes()[i], transform->GetTransform());
 		}
 	}
@@ -55,5 +55,6 @@ void Engine::Scene::CreateEntity(std::string const& entityName)
 		assert(false, "Entity already exists");
 	}
 
-	m_Entities[entityName] = Entity(entityName, this);
+
+	m_Entities.emplace(std::piecewise_construct, std::forward_as_tuple(entityName), std::forward_as_tuple(entityName,this));
 }

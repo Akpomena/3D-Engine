@@ -27,9 +27,9 @@ namespace Engine
 		std::vector<T*> GetComponents()
 		{
 			std::vector<T*> tempComponent;
-			tempComponent.reserve(m_Components[T::GetComponenetID()].size());
+			tempComponent.reserve(m_Components[T::GetComponentID()].size());
 
-			for (auto component : m_Components[T::GetComponenetID()])
+			for (auto component : m_Components[T::GetComponentID()])
 			{
 				tempComponent.push_back((T*)component);
 			}
@@ -37,6 +37,12 @@ namespace Engine
 			return tempComponent;
 		}
 
+	private:
+		template<typename T>
+		T* GetComponent(size_t& index)
+		{
+			return static_cast<T*>(m_Components[T::GetComponentID()][index]);
+		}
 	private:
 		std::string m_SceneName = std::string();
 		std::map<std::string, Entity> m_Entities;

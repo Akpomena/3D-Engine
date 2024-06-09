@@ -65,16 +65,16 @@ Engine::Mesh Engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
         Vertex vertex;
         glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
         // positions
-        vector.x = mesh->mVertices[i].x;
-        vector.y = mesh->mVertices[i].y;
-        vector.z = mesh->mVertices[i].z;
+        vector.x = static_cast<float>(mesh->mVertices[i].x);
+        vector.y = static_cast<float>(mesh->mVertices[i].y);
+        vector.z = static_cast<float>(mesh->mVertices[i].z);
         vertex.Position = vector;
         // normals
         if (mesh->HasNormals())
         {
-            vector.x = mesh->mNormals[i].x;
-            vector.y = mesh->mNormals[i].y;
-            vector.z = mesh->mNormals[i].z;
+            vector.x = static_cast<float>(mesh->mNormals[i].x);
+            vector.y = static_cast<float>(mesh->mNormals[i].y);
+            vector.z = static_cast<float>(mesh->mNormals[i].z);
             vertex.Normal = vector;
         }
         // texture coordinates
@@ -83,18 +83,18 @@ Engine::Mesh Engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
             glm::vec2 vec;
             // a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
             // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
-            vec.x = mesh->mTextureCoords[0][i].x;
-            vec.y = mesh->mTextureCoords[0][i].y;
+            vec.x = static_cast<float>(mesh->mTextureCoords[0][i].x);
+            vec.y = static_cast<float>(mesh->mTextureCoords[0][i].y);
             vertex.TexCoords = vec;
             // tangent
-            vector.x = mesh->mTangents[i].x;
-            vector.y = mesh->mTangents[i].y;
-            vector.z = mesh->mTangents[i].z;
+            vector.x = static_cast<float>(mesh->mTangents[i].x);
+            vector.y = static_cast<float>(mesh->mTangents[i].y);
+            vector.z = static_cast<float>(mesh->mTangents[i].z);
             vertex.Tangent = vector;
             // bitangent
-            vector.x = mesh->mBitangents[i].x;
-            vector.y = mesh->mBitangents[i].y;
-            vector.z = mesh->mBitangents[i].z;
+            vector.x = static_cast<float>(mesh->mBitangents[i].x);
+            vector.y = static_cast<float>(mesh->mBitangents[i].y);
+            vector.z = static_cast<float>(mesh->mBitangents[i].z);
             vertex.Bitangent = vector;
         }
         else

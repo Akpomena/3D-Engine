@@ -1,6 +1,10 @@
 #pragma once
 #include <glm/glm.hpp> 
+
 #include "../RenderCore/Model.h"
+
+#include <glm/gtc/quaternion.hpp>  
+#include <glm/gtx/quaternion.hpp>
 
 namespace Engine
 {
@@ -42,7 +46,7 @@ namespace Engine
 
 		std::string& GetTagName() { return m_Tagname; }
 	public:
-		static size_t GetComponenetID() { return GetGeneratedComponentID<TagComponent>(); }
+		static size_t GetComponentID() { return GetGeneratedComponentID<TagComponent>(); }
 	private:
 		std::string m_Tagname;
 	};
@@ -57,15 +61,18 @@ namespace Engine
 		glm::mat4 GetTransform()
 		{
 			// Setting Transform
-			glm::mat4 transform = glm::mat4(1.0f);
-			transform = glm::translate(transform, m_Position);
-			// transform = glm::rotate()
-			transform = glm::scale(transform, m_Scale);
+			glm::mat4 translate = glm::translate(glm::mat4(1.0f), m_Position);
 
-			return transform;
+			glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), (float)glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+			rotation = glm::rotate(rotation, (float)glm::radians(m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+			rotation = glm::rotate(rotation, (float)glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+
+			glm::mat4 scale = glm::scale(glm::mat4(1.0f), m_Scale);
+
+			return translate * rotation * scale;
 		}
 
-		static size_t GetComponenetID() { return GetGeneratedComponentID<TransformComponent>(); }
+		static size_t GetComponentID() { return GetGeneratedComponentID<TransformComponent>(); }
 
 	public:
 		glm::vec3 m_Position = glm::vec3(0.0f);
@@ -85,7 +92,7 @@ namespace Engine
 
 		Model m_Model;
 	public:
-		static size_t GetComponenetID() { return GetGeneratedComponentID<MeshComponent>(); }
+		static size_t GetComponentID() { return GetGeneratedComponentID<MeshComponent>(); }
 	private:
 
 	};

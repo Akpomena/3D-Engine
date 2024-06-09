@@ -9,7 +9,7 @@ public:
 	SandBoxLayer() : m_Scene("Test Scene", "assets/skybox/mountain_day/") {}
 	virtual void OnAttach() override;
 	virtual void OnDetach() override;
-	virtual void OnUpdate(float ts) override;
+	virtual void OnUpdate(double ts) override;
 	virtual void OnEvent(Event& event) override;
 	virtual void OnImGuiRender() override;
 private:

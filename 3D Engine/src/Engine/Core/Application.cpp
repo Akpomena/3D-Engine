@@ -35,8 +35,8 @@ namespace Engine {
 	{
 		while (m_Running)
 		{
-			float time = (float)glfwGetTime();
-			float timestep = time - m_LastFrameTime;
+			double time = glfwGetTime();
+			double timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
 			if (!m_Minimized)

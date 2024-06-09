@@ -5,12 +5,77 @@
 #include <glad/glad.h>
 #include <iostream>
 
+#include <Windows.h>
+#include <string>
+#include <shobjidl.h> 
+
+std::string sSelectedFile;
+std::string sFilePath;
+bool openFile()
+{
+	//  CREATE FILE OBJECT INSTANCE
+	HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+	if (FAILED(f_SysHr))
+		return FALSE;
+
+	// CREATE FileOpenDialog OBJECT
+	IFileOpenDialog* f_FileSystem;
+	f_SysHr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&f_FileSystem));
+	if (FAILED(f_SysHr)) {
+		CoUninitialize();
+		return FALSE;
+	}
+
+	//  SHOW OPEN FILE DIALOG WINDOW
+	f_SysHr = f_FileSystem->Show(NULL);
+	if (FAILED(f_SysHr)) {
+		f_FileSystem->Release();
+		CoUninitialize();
+		return FALSE;
+	}
+
+	//  RETRIEVE FILE NAME FROM THE SELECTED ITEM
+	IShellItem* f_Files;
+	f_SysHr = f_FileSystem->GetResult(&f_Files);
+	if (FAILED(f_SysHr)) {
+		f_FileSystem->Release();
+		CoUninitialize();
+		return FALSE;
+	}
+
+	//  STORE AND CONVERT THE FILE NAME
+	PWSTR f_Path;
+	f_SysHr = f_Files->GetDisplayName(SIGDN_FILESYSPATH, &f_Path);
+	if (FAILED(f_SysHr)) {
+		f_Files->Release();
+		f_FileSystem->Release();
+		CoUninitialize();
+		return FALSE;
+	}
+
+	//  FORMAT AND STORE THE FILE PATH
+	std::wstring path(f_Path);
+	std::string c(path.begin(), path.end());
+	sFilePath = c;
+
+	//  FORMAT STRING FOR EXECUTABLE NAME
+	const size_t slash = sFilePath.find_last_of("/\\");
+	sSelectedFile = sFilePath.substr(slash + 1);
+
+	//  SUCCESS, CLEAN UP
+	CoTaskMemFree(f_Path);
+	f_Files->Release();
+	f_FileSystem->Release();
+	CoUninitialize();
+	return TRUE;
+}
+
 std::unique_ptr<VertexArray> quadVAO;
 std::unique_ptr<VertexArray> skyboxVAO;
 
 void SandBoxLayer::OnAttach()
 {
-	m_Camera = std::make_unique<Camera>(&Engine::Application::Get().GetWindow(), glm::vec3(0.0f, 0.0f, 3.0f));
+	m_Camera = std::make_unique<Camera>(&Engine::Application::Get().GetWindow(), glm::vec3(0.0f, 0.0f, 10.0f));
 
 	m_Image_Width = Engine::Application::Get().GetWindow().GetWidth();
 	m_Image_Height = Engine::Application::Get().GetWindow().GetHeight();
@@ -96,8 +161,12 @@ void SandBoxLayer::OnDetach()
 {
 }
 
-void SandBoxLayer::OnUpdate(float ts)
+double frameTime = 0;
+
+void SandBoxLayer::OnUpdate(double ts)
 {
+	frameTime = ts;
+
 	// Camera Controls
 	if (Engine::Input::IsKeyPressed(KEY_W))
 		m_Camera->ProcessKeyboard(FORWARD, ts);
@@ -216,6 +285,7 @@ bool showScenePanel = true;
 bool showSideBar = true;
 
 Engine::Entity* SelectedEntity = nullptr;
+bool result = false;
 
 void SandBoxLayer::OnImGuiRender()
 {
@@ -317,6 +387,8 @@ void SandBoxLayer::OnImGuiRender()
 			ImGui::Combo("combo", &m_CurrentEffect, items, IM_ARRAYSIZE(items));
 		}
 
+		ImGui::Text("Frame Time: %lf, FPS: %lf", frameTime, 1 / frameTime);
+
 		ImGui::End();
 	}
 
@@ -327,7 +399,7 @@ void SandBoxLayer::OnImGuiRender()
 
 		for (auto tag : m_Scene.GetComponents<Engine::TagComponent>())
 		{
-			if(ImGui::Button(tag->GetTagName().c_str())) {
+			if(ImGui::Selectable(tag->GetTagName().c_str())) {
 				SelectedEntity = tag->GetParentEntity();
 			}
 		}
@@ -351,12 +423,28 @@ void SandBoxLayer::OnImGuiRender()
 
 		if (SelectedEntity)
 		{
-			Engine::TagComponent* tag = (Engine::TagComponent*)SelectedEntity->m_Components[Engine::TagComponent::GetComponenetID()];
+			Engine::TagComponent* tag = SelectedEntity->GetComponent<Engine::TagComponent>();
 			
 			static char str1[128];
 			strncpy_s(str1, sizeof(str1), tag->GetTagName().c_str(), sizeof(str1));
 
-			ImGui::InputText("Enter Entity Name", str1, IM_ARRAYSIZE(str1));
+			ImGui::InputText("##Tag", str1, IM_ARRAYSIZE(str1));
+			ImGui::SameLine();
+			ImGui::Button("Add Component");
+
+			Engine::TransformComponent* transform = SelectedEntity->GetComponent<Engine::TransformComponent>();
+			ImGui::DragFloat3("Position", (float*) & transform->m_Position, 0.1f, -50.0f, 50.0f);
+			ImGui::DragFloat3("Rotation", (float*)&transform->m_Rotation, 0.1f, -180.0f, 180.0f);
+			ImGui::DragFloat3("Scale", (float*)&transform->m_Scale, 0.1f, 0.0f, 180.0f);
+
+			if (ImGui::Button("Add Mesh"))
+			{
+				result = openFile();
+				if(result)
+					printf("SELECTED FILE: %s\nFILE PATH: %s\n\n", sSelectedFile.c_str(), sFilePath.c_str());
+				else
+					printf("ENCOUNTERED AN ERROR: (%d)\n", GetLastError());
+			}
 		}
 
 		ImGui::End();
@@ -373,19 +461,19 @@ void SandBoxLayer::OnImGuiRender()
 	{
 		if (view.x != 0 && view.y != 0)
 		{
-			m_Image_Width = view.x;
-			m_Image_Height = view.y;
+			m_Image_Width = static_cast<int>(view.x);
+			m_Image_Height = static_cast<int>(view.y);
 
-			Engine::Application::Get().GetWindow().SetViewPort(view.x, view.y);
-			m_FrameBuffer->UpdateBufferSize(view.x, view.y);
-			m_EffectFrameBuffer->UpdateBufferSize(view.x, view.y);
-			m_Camera->UpdateDimensions(view.x, view.y);
+			Engine::Application::Get().GetWindow().SetViewPort(m_Image_Width, m_Image_Height);
+			m_FrameBuffer->UpdateBufferSize(m_Image_Width, m_Image_Height);
+			m_EffectFrameBuffer->UpdateBufferSize(m_Image_Width, m_Image_Height);
+			m_Camera->UpdateDimensions(m_Image_Width, m_Image_Height);
 		}
 	}
 
 
 	ImGui::Image(m_EffectEnabled ? (void*)m_EffectFrameBuffer->GetTextureAttachment() : (void*)m_FrameBuffer->GetTextureAttachment(), 
-		ImVec2(m_Image_Width, m_Image_Height), { 0, 1 }, { 1, 0 });
+		ImVec2(view.x, view.y), { 0, 1 }, { 1, 0 });
 
 	ImGui::End();
 

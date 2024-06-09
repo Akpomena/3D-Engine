@@ -12,7 +12,7 @@ namespace Engine {
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate(float ts) {}
+		virtual void OnUpdate(double ts) {}
 		virtual void OnEvent(Event& event) {}
 		virtual void OnImGuiRender() {}
 

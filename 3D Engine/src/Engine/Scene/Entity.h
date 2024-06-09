@@ -28,18 +28,26 @@ namespace Engine
 			return m_Components & T::GetComponentID();
 		}
 
+		template<typename T>
+		T* GetComponent()
+		{
+			size_t index = m_Components[T::GetComponentID()];
+			return m_Scene->GetComponent<T>(index);
+		}
+		
 		template <typename T>
 		void AddComponent(T* component) 
 		{
-			m_Components[T::GetComponenetID()] = component;
-			m_AvailableComponents = m_AvailableComponents | T::GetComponenetID();
+			size_t index = m_Scene->m_Components[T::GetComponentID()].size();
+			m_Scene->m_Components[T::GetComponentID()].push_back(component);
 
-			m_Scene->m_Components[T::GetComponenetID()].push_back(component);
+			m_Components[T::GetComponentID()] = index;
+			m_AvailableComponents = m_AvailableComponents | T::GetComponentID();
 		}
 
-		std::unordered_map<size_t, Component*> m_Components; // TODO(Remove this)
 	private:
-		size_t m_EntityID;
+		std::unordered_map<size_t, size_t> m_Components;
+		size_t m_EntityID = 0;
 		std::string m_EntityName;
 		size_t m_AvailableComponents = 0;
 		Scene* m_Scene;
