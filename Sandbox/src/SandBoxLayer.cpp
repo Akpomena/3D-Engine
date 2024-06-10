@@ -1,74 +1,10 @@
 #include "SandBoxLayer.h"
 
 #include <imgui.h>
+#include <ImGuiFileDialog.h>
 
 #include <glad/glad.h>
 #include <iostream>
-
-#include <Windows.h>
-#include <string>
-#include <shobjidl.h> 
-
-std::string sSelectedFile;
-std::string sFilePath;
-bool openFile()
-{
-	//  CREATE FILE OBJECT INSTANCE
-	HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-	if (FAILED(f_SysHr))
-		return FALSE;
-
-	// CREATE FileOpenDialog OBJECT
-	IFileOpenDialog* f_FileSystem;
-	f_SysHr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&f_FileSystem));
-	if (FAILED(f_SysHr)) {
-		CoUninitialize();
-		return FALSE;
-	}
-
-	//  SHOW OPEN FILE DIALOG WINDOW
-	f_SysHr = f_FileSystem->Show(NULL);
-	if (FAILED(f_SysHr)) {
-		f_FileSystem->Release();
-		CoUninitialize();
-		return FALSE;
-	}
-
-	//  RETRIEVE FILE NAME FROM THE SELECTED ITEM
-	IShellItem* f_Files;
-	f_SysHr = f_FileSystem->GetResult(&f_Files);
-	if (FAILED(f_SysHr)) {
-		f_FileSystem->Release();
-		CoUninitialize();
-		return FALSE;
-	}
-
-	//  STORE AND CONVERT THE FILE NAME
-	PWSTR f_Path;
-	f_SysHr = f_Files->GetDisplayName(SIGDN_FILESYSPATH, &f_Path);
-	if (FAILED(f_SysHr)) {
-		f_Files->Release();
-		f_FileSystem->Release();
-		CoUninitialize();
-		return FALSE;
-	}
-
-	//  FORMAT AND STORE THE FILE PATH
-	std::wstring path(f_Path);
-	std::string c(path.begin(), path.end());
-	sFilePath = c;
-
-	//  FORMAT STRING FOR EXECUTABLE NAME
-	const size_t slash = sFilePath.find_last_of("/\\");
-	sSelectedFile = sFilePath.substr(slash + 1);
-
-	//  SUCCESS, CLEAN UP
-	CoTaskMemFree(f_Path);
-	f_Files->Release();
-	f_FileSystem->Release();
-	CoUninitialize();
-	return TRUE;
-}
 
 std::unique_ptr<VertexArray> quadVAO;
 std::unique_ptr<VertexArray> skyboxVAO;
@@ -152,7 +88,7 @@ void SandBoxLayer::OnAttach()
 
 	m_Scene.CreateEntity("Cube");
 	Engine::Entity& en = m_Scene.GetEntity("Cube");
-	Engine::MeshComponent* me = new Engine::MeshComponent("assets/models/cube/cube.obj", &en);
+	Engine::MeshComponent* me = new Engine::MeshComponent("assets/models/backpack/backpack.obj", &en);
 	en.AddComponent<Engine::MeshComponent>(me);
 
 }
@@ -437,13 +373,33 @@ void SandBoxLayer::OnImGuiRender()
 			ImGui::DragFloat3("Rotation", (float*)&transform->m_Rotation, 0.1f, -180.0f, 180.0f);
 			ImGui::DragFloat3("Scale", (float*)&transform->m_Scale, 0.1f, 0.0f, 180.0f);
 
-			if (ImGui::Button("Add Mesh"))
+			if (SelectedEntity->HasComponent<Engine::MeshComponent>())
 			{
-				result = openFile();
-				if(result)
-					printf("SELECTED FILE: %s\nFILE PATH: %s\n\n", sSelectedFile.c_str(), sFilePath.c_str());
-				else
-					printf("ENCOUNTERED AN ERROR: (%d)\n", GetLastError());
+				Engine::MeshComponent* mesh = SelectedEntity->GetComponent<Engine::MeshComponent>();
+
+
+				if (ImGui::Button("Load Model")) {
+					IGFD::FileDialogConfig config;
+					config.path = ".";
+					ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".obj", config);
+				}
+				// display
+				if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) {
+					if (ImGuiFileDialog::Instance()->IsOk()) { // action if OK
+						std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+						std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+						// action
+
+						std::replace(filePathName.begin(), filePathName.end(), '\\', '/'); // replace all 'x' to 'y'
+
+						mesh->m_Model.loadModel(filePathName);
+
+						std::cout << filePathName << std::endl;
+					}
+
+					// close
+					ImGuiFileDialog::Instance()->Close();
+				}
 			}
 		}
 

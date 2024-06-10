@@ -18,6 +18,10 @@ void Engine::Model::Draw(Shader& shader)
 
 void Engine::Model::loadModel(std::string const& path)
 {
+    textures_loaded.clear();
+    meshes.clear();
+
+
     // read file via ASSIMP
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);

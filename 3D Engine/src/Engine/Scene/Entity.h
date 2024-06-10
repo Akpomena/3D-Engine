@@ -23,9 +23,9 @@ namespace Engine
 		Entity() = default;
 
 		template<typename T>
-		bool HasComponent() const
+		bool HasComponent()
 		{
-			return m_Components & T::GetComponentID();
+			return m_AvailableComponents & T::GetComponentID();
 		}
 
 		template<typename T>

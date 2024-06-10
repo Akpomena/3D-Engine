@@ -17,6 +17,7 @@ IncludeDir["imgui"] = "vendor/imgui"
 IncludeDir["glm"] = "vendor/glm"
 IncludeDir["stb_Image"] = "vendor/stb_Image"
 IncludeDir["assimp"] = "vendor/assimp/include"
+IncludeDir["imguiFileDialog"] = "vendor/imguiFileDialog"
 
 include "premake/glfw.lua"
 include "premake/glad.lua"
@@ -39,7 +40,8 @@ project "3D Engine"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
-		"vendor/stb_Image/**.cpp"
+		"vendor/stb_Image/**.cpp",
+		"vendor/imguiFileDialog/ImGuiFileDialog.cpp",
 	}
 
 	includedirs
@@ -49,7 +51,8 @@ project "3D Engine"
 		"%{IncludeDir.imgui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_Image}",
-		"%{IncludeDir.assimp}"
+		"%{IncludeDir.assimp}",
+		"%{IncludeDir.imguiFileDialog}"
 	}
 
 	defines
@@ -102,6 +105,7 @@ project "SandBox"
 		"%{IncludeDir.imgui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.glad}",
+		"%{IncludeDir.imguiFileDialog}",
 		"3D Engine/src"
 	}
 

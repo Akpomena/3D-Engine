@@ -10,3 +10,6 @@
 [submodule "vendor/assimp"]
 	path = vendor/assimp
 	url = https://github.com/assimp/assimp
+[submodule "vendor/imguiFileDialog"]
+	path = vendor/imguiFileDialog
+	url = https://github.com/aiekick/ImGuiFileDialog.git
