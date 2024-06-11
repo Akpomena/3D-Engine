@@ -31,14 +31,16 @@ namespace Engine {
         Model(std::string const& path, bool gamma = false);
 
         // Default Constructor
-        Model() = default;
-        std::vector<Mesh> GetMeshes() { return meshes; }
+        Model();
+        std::vector<Mesh>& GetMeshes() { return meshes; }
 
         // draws the model, and thus all its meshes
         void Draw(Shader& shader);
 
         // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
         void loadModel(std::string const& path);
+
+        std::string m_ModelName = "No Model Loaded";
     private:
 
         // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).

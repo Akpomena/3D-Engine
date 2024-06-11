@@ -5,6 +5,8 @@
 #include "../Events/KeyEvent.h"
 #include <GLFW/glfw3.h>
 
+#include "../Debug/Instrumentor.h"
+
 #include <assert.h>
 
 namespace Engine {
@@ -15,6 +17,7 @@ namespace Engine {
 
 	Application::Application(const char* name)
 	{
+		PROFILE_FUNCTION();
 		assert(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
@@ -33,6 +36,7 @@ namespace Engine {
 
 	void Application::run()
 	{
+		PROFILE_FUNCTION();
 		while (m_Running)
 		{
 			double time = glfwGetTime();

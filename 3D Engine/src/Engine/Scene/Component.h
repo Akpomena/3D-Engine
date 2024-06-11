@@ -54,8 +54,6 @@ namespace Engine
 	class TransformComponent : public Component
 	{
 	public:
-		TransformComponent() = default;
-
 		TransformComponent(Entity* entity) : Component(entity) {}
 
 		glm::mat4 GetTransform()
@@ -86,6 +84,10 @@ namespace Engine
 	{
 	public:
 		MeshComponent(std::string const& path, Entity* entity) : m_Model(path), Component(entity)
+		{
+		}
+
+		MeshComponent(Entity* entity) : Component(entity)
 		{
 		}
 

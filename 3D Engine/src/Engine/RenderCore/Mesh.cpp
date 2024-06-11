@@ -1,6 +1,8 @@
 #include "./Mesh.h"
 #include "./VertexBufferLayout.h"
 
+#include "../Debug/Instrumentor.h"
+
 
 Engine::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
 {
@@ -22,6 +24,7 @@ Engine::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<Texture> textures)
 
 void Engine::Mesh::Draw(Shader& shader)
 {
+    PROFILE_FUNCTION();
     shader.Bind();
     // bind appropriate texturesstd::vector
     unsigned int diffuseNr = 1;
@@ -29,7 +32,7 @@ void Engine::Mesh::Draw(Shader& shader)
     unsigned int normalNr = 1;
     unsigned int heightNr = 1;
 
-    for (unsigned int i = 0; i < textures.size(); i++)
+    for (int i = 0; i < textures.size(); i++)
     {
         glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
         // retrieve texture number (the N in diffuse_textureN)
@@ -45,16 +48,20 @@ void Engine::Mesh::Draw(Shader& shader)
             number = std::to_string(heightNr++); // transfer unsigned int to string
 
         // now set the sampler to the correct texture unit
-        shader.SetUniformInt((name + number), i);
+        shader.SetUniformInt((name + number).c_str(), i);
         // and finally bind the texture
         textures[i].Bind();
     }
 
     // draw mesh
     m_VertexArray->bind();
-    //glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, 0);
-    glDrawArrays(GL_TRIANGLES, 0, vertices.size() * 88);
-    //glBindVertexArray(0);
+
+    {
+        PROFILE_SCOPE("GPU Drawing");
+        //glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size() * 88);
+        //glBindVertexArray(0);
+    }
 
     // always good practice to set everything back to defaults once configured.
     glActiveTexture(GL_TEXTURE0);

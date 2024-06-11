@@ -11,6 +11,7 @@ std::unique_ptr<VertexArray> skyboxVAO;
 
 void SandBoxLayer::OnAttach()
 {
+	PROFILE_FUNCTION()
 	m_Camera = std::make_unique<Camera>(&Engine::Application::Get().GetWindow(), glm::vec3(0.0f, 0.0f, 10.0f));
 
 	m_Image_Width = Engine::Application::Get().GetWindow().GetWidth();
@@ -88,7 +89,7 @@ void SandBoxLayer::OnAttach()
 
 	m_Scene.CreateEntity("Cube");
 	Engine::Entity& en = m_Scene.GetEntity("Cube");
-	Engine::MeshComponent* me = new Engine::MeshComponent("assets/models/backpack/backpack.obj", &en);
+	Engine::MeshComponent* me = new Engine::MeshComponent(&en);
 	en.AddComponent<Engine::MeshComponent>(me);
 
 }
@@ -101,6 +102,7 @@ double frameTime = 0;
 
 void SandBoxLayer::OnUpdate(double ts)
 {
+	PROFILE_FUNCTION();
 	frameTime = ts;
 
 	// Camera Controls
@@ -225,6 +227,8 @@ bool result = false;
 
 void SandBoxLayer::OnImGuiRender()
 {
+	PROFILE_FUNCTION();
+
 	static bool opt_fullscreen = true;
 	static bool opt_padding = false;
 	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -323,7 +327,10 @@ void SandBoxLayer::OnImGuiRender()
 			ImGui::Combo("combo", &m_CurrentEffect, items, IM_ARRAYSIZE(items));
 		}
 
-		ImGui::Text("Frame Time: %lf, FPS: %lf", frameTime, 1 / frameTime);
+		int fps = 1 / frameTime;
+
+		ImGui::Text("Frame Time: %.2lfms, FPS: %d", frameTime * 1000, fps);
+		ImGui::Text("Draw Calls: %d", Engine::Renderer::GetStats()->renderCalls);
 
 		ImGui::End();
 	}
@@ -377,7 +384,7 @@ void SandBoxLayer::OnImGuiRender()
 			{
 				Engine::MeshComponent* mesh = SelectedEntity->GetComponent<Engine::MeshComponent>();
 
-
+				ImGui::Text(mesh->m_Model.m_ModelName.c_str());
 				if (ImGui::Button("Load Model")) {
 					IGFD::FileDialogConfig config;
 					config.path = ".";
@@ -433,7 +440,7 @@ void SandBoxLayer::OnImGuiRender()
 
 	ImGui::End();
 
-	ImGui::ShowDemoWindow((bool*)1);
+	//ImGui::ShowDemoWindow((bool*)1);
 	ImGui::End();
 
 

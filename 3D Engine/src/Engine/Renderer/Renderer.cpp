@@ -4,8 +4,11 @@
 #include <GLFW\glfw3.h>
 
 #include <assert.h>
+#include "../Debug/Instrumentor.h"
 
 Shader* Engine::Renderer::m_Shader = nullptr;
+Engine::RendererStats* Engine::Renderer::m_Stats = new Engine::RendererStats;
+
 
 void Engine::Renderer::Init()
 {
@@ -28,6 +31,7 @@ void Engine::Renderer::Init()
 void Engine::Renderer::BeginScene(Camera& camera, Shader& shader)
 {
 	Clear();
+	m_Stats->renderCalls = 0;
 
 	m_Shader = &shader;
 	m_Shader->Bind();
@@ -41,9 +45,13 @@ void Engine::Renderer::EndScene()
 	
 }
 
-void Engine::Renderer::Draw(Mesh& mesh, glm::mat4 transform)
+void Engine::Renderer::Draw(Mesh& mesh, glm::mat4& transform)
 {
+	PROFILE_FUNCTION();
+
+	m_Stats->renderCalls++;
 	m_Shader->SetUniformMat4("u_Model", transform);
+
 	mesh.Draw(*m_Shader);
 }
 

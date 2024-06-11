@@ -5,6 +5,7 @@
 #include "Component.h"
 
 #include "../Renderer/Renderer.h"
+#include "../Debug/Instrumentor.h"
 
 Engine::Scene::Scene(const char* sceneName, const char* skybox) : m_SceneName(sceneName), m_Skybox(skybox)
 {
@@ -12,31 +13,20 @@ Engine::Scene::Scene(const char* sceneName, const char* skybox) : m_SceneName(sc
 
 void Engine::Scene::DrawScene()
 {
-	/*for (auto& [key, entity] : m_Entities)
+	PROFILE_FUNCTION();
+
+	for (auto& meshComponent : GetComponents<MeshComponent>())
 	{
-		if (entity.HasComponent[MeshComponent::GetComponenetID()])
+		TransformComponent* transformComponent = meshComponent->GetParentEntity()->GetComponent<TransformComponent>();
+		glm::mat4 transform = transformComponent->GetTransform();
+
+		for (auto& mesh: meshComponent->m_Model.GetMeshes())
 		{
-			MeshComponent* newModel = (MeshComponent*)entity.m_Components[MeshComponent::GetComponenetID()];
-
-			TransformComponent* newTransform = (TransformComponent*)entity.m_Components[TransformComponent::GetComponenetID()];
-
-
-			for (int i = 0; i < newModel->m_Model.GetMeshes().size(); i++)
-			{
-				Renderer::Draw(newModel->m_Model.GetMeshes()[i], newTransform->GetTransform());
-			}
-		}
-	}*/
-
-	for (auto mesh : GetComponents<MeshComponent>())
-	{
-		for (int i = 0; i < mesh->m_Model.GetMeshes().size(); i++)
-		{
-			TransformComponent* transform = mesh->GetParentEntity()->GetComponent<TransformComponent>();
-			Renderer::Draw(mesh->m_Model.GetMeshes()[i], transform->GetTransform());
+			Renderer::Draw(mesh, transform);
 		}
 	}
 }
+
 Engine::Entity& Engine::Scene::GetEntity(const std::string& name)
 {
 	if (m_Entities.find(name) == m_Entities.end())

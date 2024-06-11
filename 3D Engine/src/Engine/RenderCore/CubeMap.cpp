@@ -101,7 +101,7 @@ void Engine::SkyBox::Draw(Camera& camera)
     m_SkyboxShader.Bind();
 
     glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
-    m_SkyboxShader.SetUniformMat4("view", view);
+    m_SkyboxShader.SetUniformMat4("view", std::move(view));
     m_SkyboxShader.SetUniformMat4("projection", camera.GetProjMatrix());
 
     m_SkyboxVAO.bind();

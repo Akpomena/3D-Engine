@@ -9,6 +9,8 @@
 #include "../Events/KeyEvent.h"
 #include "../Events/MouseEvent.h"
 
+#include "../Debug/Instrumentor.h"
+
 Window::Window(WindowProps props):
 	m_Props(props), m_Window(nullptr)
 {
@@ -41,8 +43,15 @@ bool Window::IsVSync() const
 
 void Window::Update()
 {
-	glfwPollEvents();
-	glfwSwapBuffers(m_Window);
+	{
+		PROFILE_SCOPE("Poll events");
+		glfwPollEvents();
+	}
+
+	{
+		PROFILE_SCOPE("Swap Buffers");
+		glfwSwapBuffers(m_Window);
+	}
 }
 
 void Window::EnableCursor(bool enable)

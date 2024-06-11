@@ -4,10 +4,15 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "../Debug/Instrumentor.h"
 
 Engine::Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
 {
     loadModel(path);
+}
+
+Engine::Model::Model() : gammaCorrection(false)
+{
 }
 
 void Engine::Model::Draw(Shader& shader)
@@ -18,13 +23,22 @@ void Engine::Model::Draw(Shader& shader)
 
 void Engine::Model::loadModel(std::string const& path)
 {
+    PROFILE_FUNCTION();
+
     textures_loaded.clear();
     meshes.clear();
 
 
     // read file via ASSIMP
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+
+
+    const aiScene* scene;
+    {
+        PROFILE_SCOPE("Reading Model file");
+        scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+    }
+
     // check for errors
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
     {
@@ -34,12 +48,15 @@ void Engine::Model::loadModel(std::string const& path)
     // retrieve the directory path of the filepath
     directory = path.substr(0, path.find_last_of('/'));
 
+    m_ModelName = path.substr(path.find_last_of('/'));
+
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene);
 }
 
 void Engine::Model::processNode(aiNode* node, const aiScene* scene)
 {
+    PROFILE_FUNCTION();
     // process each mesh located at the current node
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
@@ -58,6 +75,7 @@ void Engine::Model::processNode(aiNode* node, const aiScene* scene)
 
 Engine::Mesh Engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
+    PROFILE_FUNCTION();
     // data to fill
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -142,6 +160,7 @@ Engine::Mesh Engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 std::vector<Texture> Engine::Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 {
+    PROFILE_FUNCTION();
     std::vector<Texture> textures;
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {

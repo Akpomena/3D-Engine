@@ -122,7 +122,7 @@ namespace Engine {
 	};
 }
 
-#define HZ_PROFILE 1
+#define HZ_PROFILE 0
 #if HZ_PROFILE
 #define PROFILE_BEGIN_SESSION(name, filepath) ::Engine::Instrumentor::Get().BeginSession(name, filepath)
 #define PROFILE_END_SESSION() ::Engine::Instrumentor::Get().EndSession()

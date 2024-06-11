@@ -9,6 +9,8 @@
 #include <imgui.h>
 #include <glfw/glfw3.h>
 
+#include "../Debug/Instrumentor.h"
+
 namespace Engine {
 
 	ImGuiLayer::ImGuiLayer()
@@ -62,6 +64,8 @@ namespace Engine {
 
     void ImGuiLayer::Begin()
     {
+        PROFILE_FUNCTION();
+
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -69,6 +73,8 @@ namespace Engine {
 
     void ImGuiLayer::End()
     {
+        PROFILE_FUNCTION();
+
         ImGuiIO& io = ImGui::GetIO();
         //Application& app = Application::Get();
         //io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
@@ -79,10 +85,24 @@ namespace Engine {
 
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
+            PROFILE_SCOPE("Imgui context change");
+
             GLFWwindow* backup_current_context = glfwGetCurrentContext();
-            ImGui::UpdatePlatformWindows();
-            ImGui::RenderPlatformWindowsDefault();
-            glfwMakeContextCurrent(backup_current_context);
+
+            {
+                PROFILE_SCOPE("UpdatePlatformWindows");
+                ImGui::UpdatePlatformWindows();
+            }
+
+            {
+                PROFILE_SCOPE("RenderPlatformWindowsDefault");
+                ImGui::RenderPlatformWindowsDefault();
+            }
+
+            {
+                PROFILE_SCOPE("glfwMakeContextCurrent");
+                glfwMakeContextCurrent(backup_current_context);
+            }
         }
     }
 

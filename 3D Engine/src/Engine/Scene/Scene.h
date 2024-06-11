@@ -4,6 +4,8 @@
 #include <map>
 #include <vector>
 
+#include "../Debug/Instrumentor.h"
+
 
 #include "../RenderCore/CubeMap.h"
 
@@ -26,6 +28,7 @@ namespace Engine
 		template<typename T>
 		std::vector<T*> GetComponents()
 		{
+			PROFILE_FUNCTION();
 			std::vector<T*> tempComponent;
 			tempComponent.reserve(m_Components[T::GetComponentID()].size());
 
@@ -41,6 +44,7 @@ namespace Engine
 		template<typename T>
 		T* GetComponent(size_t& index)
 		{
+			PROFILE_FUNCTION();
 			return static_cast<T*>(m_Components[T::GetComponentID()][index]);
 		}
 	private:
